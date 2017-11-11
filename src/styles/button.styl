@@ -1,0 +1,21 @@
+@import './vars'
+
+.button
+  background rgba(0, 0, 0, 0)
+  color $color-text
+  font-weight 700
+  font-size 11px
+  padding .3em .6em
+  border 1px solid $color-text
+  border-radius 2px
+  cursor pointer
+  display flex
+  align-items center
+  justify-content center
+  
+  &:hover
+    color white
+    border 1px solid white
+  &:active
+    background rgba(0, 0, 0, .15)
+
