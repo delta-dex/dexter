@@ -95,7 +95,7 @@ export default {
     flex-basis 25%
     
   .chart-container
-    flex-basis 35%
+    flex-basis 15%
   
   .trade-history-container
     margin-left auto

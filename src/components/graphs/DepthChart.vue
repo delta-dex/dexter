@@ -34,26 +34,26 @@ export default {
     buys: {
       handler: function(newData, oldData){
         if(this.buys.length && this.svg){
-          this.draw(this.formatData(this.buys, "buy"))
+          this.draw(this.formatData(this.buys, "buy"), this.formatData(this.sells, "sell"))
         }
       },
       immediate: true,
       deep: true
     },
-    // sells: {
-    //   handler: function(newData, oldData){
-    //     if(this.sells.length && this.sell_svg){
-    //       this.draw(this.formatData(this.buys, this.sells))
-    //     }
-    //   },
-    //   immediate: true,
-    //   deep: true
-    // }
+    sells: {
+      handler: function(newData, oldData){
+        if(this.sells.length && this.svg){
+          this.draw(this.formatData(this.buys, "buy"), this.formatData(this.sells, "sell"))
+        }
+      },
+      immediate: true,
+      deep: true
+    }
   },
   
   methods: {
     initChart(){
-      this.margin = {top: 50, right: 45, bottom: 80, left: 5}
+      this.margin = {top: 5, right: 45, bottom: 5, left: 5}
       this.width = this.$refs.chart_container.clientWidth - this.margin.left - this.margin.right
       this.height = this.$refs.chart_container.clientHeight - this.margin.top - this.margin.bottom
 
@@ -66,8 +66,12 @@ export default {
 	      .attr("id","group")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     },
-    draw(data){
-      log("draw: ", data)
+    draw(buy_data, sell_data){
+      let all_data = buy_data.concat(sell_data)
+      log("buy_data: ", buy_data)
+      log("sell_data: ", sell_data)
+      log("all_data: ", all_data)
+
       d3.select("#group").selectAll("*").remove()
 
       // START
@@ -82,16 +86,22 @@ export default {
           .x(d => { return x(d.cum_worth) })
           .y1(d => { return y(d.price) })
 
+      var sell_area = d3.area()
+          .curve(d3.curveStep)
+          .x(d => { return x(d.cum_worth) })
+          .y1(d => { return y(d.price) })
 
-      x.domain(d3.extent(data, d => { return d.cum_worth }))
-      y.domain([d3.max(data, d => { return d.price }), d3.min(data, d => { return d.price })])
+
+      x.domain(d3.extent(all_data, d => { return d.cum_worth }))
+      y.domain([d3.max(all_data, d => { return d.price }), d3.min(all_data, d => { return d.price })])
       buy_area.y0(y(0));
+      sell_area.y0(y(1));
 
       this.g.append("g")			
         .attr("class", "grid")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(x)
-              .ticks(10)
+              .ticks(5)
               .tickSize(-this.height)
               .tickFormat("")
              )
@@ -104,16 +114,23 @@ export default {
               .tickFormat("")
              )
 
+      // Buy Area
       this.g.append("path")
-        .datum(data)
+        .datum(buy_data)
         .attr("class", "buy-area")
         .attr("d", buy_area);
+
+      // Sell Area
+      this.g.append("path")
+        .datum(sell_data)
+        .attr("class", "sell-area")
+        .attr("d", sell_area);
 
       this.g.append("g")
          // .attr("transform", "translate(0," + this.height + ")")
         .attr("class", "axis")
         .call(d3.axisBottom(x)
-              .ticks(10)
+              .ticks(5)
              )
 
       this.g.append("g")
@@ -147,7 +164,7 @@ export default {
       return avg;
     },
     formatData(orders, type){
-      let prices = orders.map(order => {return order.price})
+      let prices = orders.map(order => {return (order.price)})
       let max = prices.reduce(function(a, b) {
         return Math.max(a, b);
       });
@@ -157,6 +174,14 @@ export default {
       let sd = this.standardDeviation(prices)
       let avg = this.average(prices)
       let cum_worth = 0
+
+      let min_sell =  this.sells.map(order => {return (order.price)}).reduce((a,b) => {
+        return Math.min(a,b)
+      })
+      let max_buy =  this.buys.map(order => {return (order.price)}).reduce((a,b) => {
+        return Math.max(a,b)
+      })
+
       // log("STANDARD!: ", sd)
       // log("AVG!: ", avg)
       // log("MAX!: ", max)
@@ -165,13 +190,13 @@ export default {
       orders = orders
         .filter(order => {
           if(type == "buy"){
-            if(order.price < (max - sd)){
+            if(order.price < (max * .7) || order.price > min_sell){
               return false
             } else {
               return true
             }
           } else {
-            if(order.price > (min + sd)){
+            if(order.price > (min * 1.3) || order.price < max_buy){
               return false
             } else {
               return true
@@ -187,13 +212,23 @@ export default {
           }
         })
         .sort((a, b) => {
-          if(a.price > b.price){
-            return -1
+          if(a.type == "buy"){
+            if(a.price > b.price){
+              return -1
+            }
+            if(a.price < b.price){
+              return 1
+            }
+            return 0
+          } else {
+            if(a.price > b.price){
+              return 1
+            }
+            if(a.price < b.price){
+              return -1
+            }
+            return 0
           }
-          if(a.price < b.price){
-            return 1
-          }
-          return 0
         })
         .map(order => {
           cum_worth += order.total
@@ -244,8 +279,14 @@ export default {
      .buy-area
        fill transparentify($color-green, 25%)
        stroke $color-green
-       stroke-width 2px
-       stroke-dasharray 1500
+       stroke-width 1px
+       // stroke-dasharray 500
+
+     .sell-area
+       fill transparentify($color-red, 25%)
+       stroke $color-red
+       stroke-width 1px
+       // stroke-dasharray 500
 
      .domain
        stroke none
