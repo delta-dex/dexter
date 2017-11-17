@@ -62,14 +62,47 @@ const mutations = {
 
 // Actions
 const actions = {
-  watch_market: ({commit, state}, market) => {
+  watch_current_market: ({commit, state}, market) => {
     
   },
+  update_current_market: ({dispatch, commit, state, rootState}, market) => {
+    commit("UPDATE_CURRENT_MARKET", market)
+    
+    // Remove Listeners
+    APIs.EtherDelta.socket.off('trades')
+    APIs.EtherDelta.socket.off('orders')
 
-  get_markets: ({commit, state}, socket) => {
-    socket.emit('getMarket', { token: '', user: '' })
-    socket.once('market', (market) => {
-      console.log("markets", market)
+    // Get new Market
+    APIs.EtherDelta.socket.emit('getMarket', {
+      token: market.tokenAddr,
+      user: rootState.users.address
+    })
+
+    // On New market
+    APIs.EtherDelta.socket.once('market', (market) => {
+      log("market!!!!!!:", market)
+      let markets = []
+      for(let key in market.returnTicker){
+        let m = market.returnTicker[key]
+        m.currency = key.split("_")[1]
+        markets.push(m)
+      }
+      
+      commit("UPDATE_MARKETS", markets)
+      commit("trades/UPDATE_TRADES", market.trades, {root: true})
+      commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
+      commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
+      
+      dispatch("orders/watch_orders", {}, {root: true})
+      dispatch("trades/watch_trades", {}, {root: true})
+      
+    })
+  },
+
+  get_markets: ({commit, state}, tokenAddress, userAddress) => {
+    APIs.EtherDelta.socket.emit('getMarket', { token: tokenAddress, user: userAddress })
+    APIs.EtherDelta.socket.once('market', (market) => {
+      log("GOT MARKET", market)
       let markets = []
       for(let key in market.returnTicker){
         let m = market.returnTicker[key]

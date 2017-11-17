@@ -2,7 +2,7 @@
 import CoinMarketCap from './CoinMarketCap'
 import CryptoCompare from './CryptoCompare'
 import Fixer from './Fixer'
-import EtherDelta from './EtherDelta'
+import EtherDelta from './EtherDelta/EtherDelta'
 import Liqui from './Liqui'
 import Chan from './4chan'
 

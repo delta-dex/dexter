@@ -1,10 +1,14 @@
 <template lang="pug">
 #exchange-page
-  .order-form-container
-    order-form(:current_market="current_market")
+  .left-container
+    balance(:current_market="current_market" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
+    order-form(:current_market="current_market" v-if="current_market")  
     
   .order-history-container
     order-history(:buys="buy_orders", :sells="sell_orders")
+
+  .chart-container  
+    depth-chart(:buys="buy_orders", :sells="sell_orders")
   
   .trade-history-container
     trade-history(:trades="trades")
@@ -13,11 +17,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import Balance from "@/components/Balance"
 import TradeHistory from "@/components/TradeHistory"
 import OrderHistory from "@/components/OrderHistory"
 import OrderForm from "@/components/OrderForm"
-import { mapGetters, mapActions } from 'vuex'
+import DepthChart from "@/components/graphs/DepthChart"
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import APIs from '../store/apis'
 
@@ -26,7 +31,9 @@ export default {
   components: {
     TradeHistory,
     OrderHistory,
-    OrderForm
+    OrderForm,
+    DepthChart,
+    Balance,
   },
   computed: {
     ...mapGetters({
@@ -34,6 +41,8 @@ export default {
       trades: 'trades/current_market_trades',
       buy_orders: 'orders/current_market_buy_orders',
       sell_orders: 'orders/current_market_sell_orders',
+      current_wallet: 'users/current_wallet',
+      ed_wallet: 'users/ed_wallet',
     })
   },
   methods: {
@@ -41,15 +50,28 @@ export default {
       watchOrders: 'orders/watch_orders',
       watchTrades: 'trades/watch_trades',
       getMarkets: 'markets/get_markets',
-    })
+      updateCurrentWallet: 'users/update_current_wallet',
+      updateEdWallet: 'users/update_ed_wallet',
+      updateCurrentMarket: "markets/update_current_market",
+    }),
+    ...mapMutations({
+      updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
+    }),
+    
   },
   created(){
-    this.ed = new APIs.EtherDelta()
-    this.ed.initSocket().then(socket => {
-      this.getMarkets(socket)      
-      this.watchOrders(socket)
-      this.watchTrades(socket)
+    let current_market = {
+      tokenAddr: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
+      currency: "RDN"
+    }
+
+    APIs.EtherDelta.initSocket().then(socket => {
+      this.updateCurrentMarket(current_market)
+      this.updateCurrentMarketFilter(current_market.currency)      
     })
+
+    this.updateCurrentWallet()
+    this.updateEdWallet()
   },
   mounted(){
 
@@ -57,16 +79,23 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 #exchange-page
   display flex
   flex-basis 100%
+  height 100%
   
+  .left-container
+    flex-basis 15%
+    
   .order-form-container
     flex-basis 15%
   
   .order-history-container
     flex-basis 25%
+    
+  .chart-container
+    flex-basis 35%
   
   .trade-history-container
     margin-left auto

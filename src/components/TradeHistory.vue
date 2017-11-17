@@ -12,7 +12,7 @@
       tbody
         tr(v-for='trade in trades' :class="{'buy': trade.side == 'buy', 'sell': trade.side == 'sell' }" @click="goToTx(trade.txHash)")
           td.volume
-            span {{volumeFormat(trade.amount)}}
+            span {{parseFloat(trade.amount).toFixed(3)}}
           td.price
             span {{priceFormat(trade.price)}}
           td.time
@@ -74,10 +74,13 @@ export default {
 .trade-history
   display flex
   flex-wrap wrap
+  height 100%
 
   .body
     display flex
     flex-wrap wrap
+    overflow scroll
+    height 100%
 
     table
       width 100%
@@ -108,11 +111,11 @@ export default {
           &.sell
             td.price
               span
-                color #ff4e38
+                color $color-red
           &.buy
             td.price
               span
-                color #15f315
+                color $color-green
               
           &:hover
             background lighten($color-component-background, 15%)

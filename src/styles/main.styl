@@ -3,6 +3,8 @@
 @import './input'
 @import './transitions'
 @import './typography'
+@import './modal.styl'
+@import './component.styl'
 
 
 html
@@ -12,10 +14,8 @@ body
   height 100%
   margin 0px
   background-color $color-background
-
-  .material-icons
-    color rgba(0, 0, 0, .5)
-    
+  overflow hidden
+  
 .desktop
   @media screen and (max-width: 599px)  
     display none !important
@@ -23,30 +23,4 @@ body
   @media screen and (min-width: 600px)  
     display none !important
 
-.row 
-  display flex
-  flex-basis 100%
-  align-items center
-  margin 0px
 
-.component
-  border 1px solid darken($color-component-background, 15%)
-  background $color-component-background
-  
-  .header
-    display flex
-    align-items center
-    padding .8em
-    font-size 14px
-    font-weight bold
-    flex-basis 100%
-    border-bottom 1px solid darken($color-background, 13%)
-    background  lighten($color-component-background, 13%)
-    
-    span
-      color #fff 
-    
-  .body
-    display flex
-    flex-wrap wrap
-    flex-basis 100%

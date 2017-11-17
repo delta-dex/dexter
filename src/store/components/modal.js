@@ -1,33 +1,27 @@
 // State
 const state = {
-  modal: {
-    open: false,
-    header: "",
-    component: null
-  }
+  current_modal: null
 }
 
 // Getters
 var getters = {
-  modal: state =>  state.modal
+  current_modal: state =>  state.current_modal,
 }
 
 // Mutations
 var mutations = {
-  ["UPDATE_MODAL"] (state, modal) {
-    state.modal = modal
+  ["SET_CURRENT_MODAL"] (state, modal) {
+    state.current_modal = modal
   },
 }
 
 // Actions
 var actions = {
-  updateModal: ({ commit, state }, modal) => {
-    commit("UPDATE_MODAL", modal)
-  }
+  
 }
 
-
 export default {
+  namespaced: true,
   state,
   getters,
   mutations,

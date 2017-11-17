@@ -19,6 +19,7 @@ const store = new Vuex.Store({
     
     // Components
     navbar: components.Navbar,
+    modal: components.Modal,
   }
 })
 

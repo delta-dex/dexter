@@ -1,0 +1,122 @@
+<template lang="pug">
+.balance.component
+  .header
+    span BALANCE
+  .body
+    .balance-container
+      .eth.balance-row
+        span.currency ETH
+        span.amount {{edEthBalance}} 
+      .alt.balance-row(v-if="current_market")
+        span.currency {{current_market.currency}}
+        span.amount {{edTokenBalance}}
+    .action-container
+      div.button.deposit(@click="openModal('DepositModal')")
+        i.material-icons eject
+        span DEPOSIT
+      div.button.withdraw(@click="openModal('WithdrawModal')")
+        i.material-icons eject
+        span WITHDRAW
+
+      
+</template>
+
+<script>
+import { mapGetters, mapMutations } from 'vuex'  
+export default {
+  name: 'Balance',
+  data(){
+    return {
+      
+    }
+  },
+  props: {
+    current_market: {
+      default: {}
+    },
+    current_wallet: {
+      default: {}
+    },
+    ed_wallet: {
+      default: {}
+    }
+  },
+  methods: {
+    ...mapMutations({
+      openModal: "modal/SET_CURRENT_MODAL"
+    })
+  },
+  computed: {
+    ...mapGetters([
+
+    ]),
+    edEthBalance(){
+      return parseFloat(this.ed_wallet.balance)
+    },
+    edTokenBalance(){
+      let balance = parseFloat("0.0")
+      this.ed_wallet.tokens.forEach(token => {
+        if(token.address === this.current_market.tokenAddr){
+          balance = parseFloat(token.balance)
+        }
+      })
+      return balance
+    }
+  },
+  mounted(){
+
+  }
+}
+</script>
+
+
+<style lang="stylus">
+@import "../styles/main.styl"
+
+.balance
+  display flex
+  flex-wrap wrap
+  
+  .body
+    display flex
+    flex-wrap wrap
+    
+    .balance-container
+      padding .5em 1em
+      flex-basis 100%
+
+      .balance-header
+        margin-bottom 10px
+        span
+          font-size 13px
+          color white
+          font-weight 700
+            
+      .balance-row
+        display flex
+        align-items center
+        justify-content space-between
+        margin-bottom .5em
+        
+        span.currency
+          font-size 13px
+          font-weight 400
+
+        span.amount
+          font-size 12px
+          font-weight 700
+
+    .action-container
+      display flex
+      flex-basis 100%
+      align-items center
+      justify-content space-around
+      padding-bottom 1em
+
+      .deposit
+        i
+          transform rotate(180deg)
+          padding-left 5px
+        
+      
+</style>

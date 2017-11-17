@@ -29,12 +29,16 @@ const mutations = {
   ["ADD_TRADES"] (state, trades) {
     state.trades = trades.concat(state.trades)
   },
+  ["UPDATE_TRADES"] (state, trades) {
+    state.trades = trades
+  },
+  
 }
 
 // Actions
 const actions = {
-  watch_trades: ({commit, state}, socket) => {
-    socket.on('trades', (trades) => {
+  watch_trades: ({commit, state}) => {
+    APIs.EtherDelta.socket.on('trades', (trades) => {
       commit("ADD_TRADES", trades)
     })
   }  

@@ -11,17 +11,16 @@
           // th Total
           th Time
       tbody
-        tr.buy(v-for='sell in sells')
-          td.volume {{volumeFormat(sell.amount)}}
+        tr.sell(v-for='sell in sells')
+          td.volume {{sell.amount.toFixed(3)}}
           td.price {{priceFormat(sell.price)}}
-          // td.total {{priceFormat(sell.amount * sell.price)}}        
-          td.time {{timeFormat(sell.updated)}}
-        tr.sell(v-for='buy in buys')
-          td.volume {{volumeFormat(buy.amount)}}
-          td.price {{priceFormat(buy.price)}}
           // td.total {{priceFormat(buy.amount * buy.price)}}        
+          td.time {{timeFormat(sell.updated)}}
+        tr.buy(v-for='buy in buys')
+          td.volume {{buy.amount.toFixed(3)}}
+          td.price {{priceFormat(buy.price)}}
+          // td.total {{priceFormat(sell.amount * sell.price)}}        
           td.time {{timeFormat(buy.updated)}}
-
 </template>
 
 <script>
@@ -50,7 +49,7 @@ export default {
   },
   methods: {
     volumeFormat(volume){
-      return parseFloat(volume).toFixed(10)
+      return Math.abs(parseFloat(volume))
     },
     priceFormat(price){
       return parseFloat(price).toFixed(10)
@@ -79,11 +78,14 @@ export default {
 .order-history
   display flex
   flex-wrap wrap
-
+  height 100%
+  
   .body
     display flex
     flex-wrap wrap
-    
+    overflow scroll
+    height 100%
+      
     table
       width 100%
       border-collapse collapse
@@ -112,10 +114,10 @@ export default {
           cursor pointer
           &.sell
             td.price
-              color #ff4e38
+              color $color-red
           &.buy
             td.price
-              color #15f315
+              color $color-green
               
           &:hover
             background lighten($color-component-background, 15%)

@@ -1,57 +1,115 @@
+import APIs from '../apis'
+const ETH_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 // State
 const state = {
-  first_name: "Tyler",
-  last_name: "Durden",
-  base_fiat: "USD",
-  base_currency: "USD",
-  email: "",
-  transition: null,
+  lang: "en-US",
+  address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+  current_wallet: {
+    address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+    balance: "",
+    tokens: [
+      {
+        address: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
+        balance: "0",
+        name: "Raiden Network",
+        symbol: "RDN"
+      }
+    ]
+  },
+  ed_wallet: {
+    address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+    balance: "0.0",
+    tokens: [
+      {
+        address: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
+        balance: "0.0",
+        name: "Raiden Network",
+        symbol: "RDN"
+      }
+    ]    
+  },
+  wallets: [
+    // {
+    //   address: "",
+    //   balance: "",
+    //   tokens: [
+    //     {
+    //       address: "",
+    //       balance: ""
+    //     }
+    //   ]
+    // }
+  ]
 }
 
 // Getters
 var getters = {
-  first_name: state =>  state.first_name,
-  last_name: state =>  state.last_name,
-  base_currency: state => state.base_currency,
+  ed_wallet: state => state.ed_wallet,
+  current_wallet: state => state.current_wallet,
+  wallets: state =>  state.wallets,
+  lang: state => state.lang,
+  address: state => state.address,
 }
 
 // Mutations
 var mutations = {
-  ["UPDATE_FIRST_NAME"] (state, first_name) {
-    state.first_name = first_name
+  ["UPDATE_LANG"] (state, lang) {
+    state.lang = lang
   },
-  ["UPDATE_LAST_NAME"] (state, last_name) {
-    state.last_name = last_name
+  ["UPDATE_CURRENT_WALLET"] (state, wallet) {
+    state.current_wallet = wallet
   },
-  ["UPDATE_EMAIL"] (state, email) {
-    state.email = email
-  },
-  ["UPDATE_BASE_FIAT"] (state, base_fiat) {
-    state.base_fiat = base_fiat
-  },
-  ["UPDATE_BASE_CURRENCY"] (state, base_currency) {
-    state.base_currency = base_currency
-  },
-  ["LOAD_USER"] (state, oldState) {
-    state.first_name = oldState.first_name
-    state.last_name = oldState.last_name
-    state.email = oldState.email
-    state.base_fiat = oldState.base_fiat
+  ["UPDATE_ED_WALLET"] (state, wallet) {
+    state.ed_wallet = wallet
+  },  
+  ["ADD_WALLET"] (state, account) {
+    state.accounts.push(account)
+  },  
+  ["UPDATE_WALLETS"] (state, wallets) {
+    state.wallets = wallets
   },
 }
 
 // Actions
 var actions = {
-  load_user: ({ commit, state }) => {
-    let user = localStorage.getItem("user");
-    if(user){
-      commit("LOAD_USER", JSON.parse(user))
-    }
-  },
   save_user: ({ commit, state }) => {
     let user = JSON.stringify(state)
     localStorage.setItem("user", user)
-  }
+  },
+  update_current_wallet: ({ commit, state }) => {
+    let wallet = Object.assign({}, state.current_wallet)
+    
+    // Get ETH Balance
+    APIs.EtherDelta.getBalance(ETH_ADDRESS, state.current_wallet.address).then(results => {
+      wallet.balance = results
+    })
+
+    wallet.tokens.forEach(token => {
+      APIs.EtherDelta.getBalance(token.address, state.current_wallet.address).then(results => {
+        token.balance = results
+      })
+    })
+
+    commit("UPDATE_CURRENT_WALLET", wallet)
+  },
+  update_ed_wallet: ({ commit, state }) => {
+    let wallet = Object.assign({}, state.ed_wallet)
+
+    // Get ETH Balance
+    APIs.EtherDelta.getEtherDeltaBalance(ETH_ADDRESS, wallet.address).then(results => {
+      wallet.balance = results
+    })
+
+    wallet.tokens.forEach(token => {
+      APIs.EtherDelta.getEtherDeltaBalance(token.address, wallet.address).then(results => {
+        token.balance = results
+      })
+    })
+
+    commit("UPDATE_ED_WALLET", wallet)
+  },
+  
 }
 
 export default {

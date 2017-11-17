@@ -1,28 +1,13 @@
 <template lang="pug">
-#navbar
-  .left
-    p.brand {{brand}}
-  .center
-    .currency-select
-      // span.current-currency(v-if="!currencySelectActive") {{current_market.currency}}
-      input(:value="current_market_filter" @focus="currencySelectActive = true" @blur="currencySelectActive = false" @input="onFilterChange")
-      .type-ahead(v-if="currencySelectActive && markets.length")
-        .market( @mousedown="onMarketSelect('ALL TOKENS')")
-          span ALL TOKENS
-
-        .market(v-for="market in markets" @mousedown="onMarketSelect(market)")
-          span {{market.currency}}
-  .right
-    span user
+.volume
       
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'  
-import APIs from '../store/apis'
+
 
 export default {
-  name: 'Navbar',
+  name: 'Volume',
   data(){
     return {
       currency: "",

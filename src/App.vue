@@ -4,16 +4,22 @@
     navbar
     
   .router-view-container
-    // transition(:name="fade" mode='out-in')      
+    // transition(name="fade" mode='out-in')      
     router-view
+
+
+  modal-loader
 
 </template>
 
 <script>
-import Navbar from '@/components/navbar'  
+import Navbar from '@/components/navbar'
+import ModalLoader from '@/components/modalLoader'
+
 export default {
   components: {
-    Navbar
+    Navbar,
+    ModalLoader,
   },
   name: 'app',
   created(){
@@ -28,13 +34,15 @@ export default {
 $navbar-height = 50px
 
 #app
+  height 100%
+  
   .navbar-container
     flex-basis 100%
     height $navbar-height
     
   .router-view-container
     flex-basis 100%
-    height 100vh
+    height calc(100vh - 50px)
     
       
 </style>

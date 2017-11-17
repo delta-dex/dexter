@@ -5,17 +5,30 @@
   color $color-text
   font-weight 700
   font-size 11px
-  padding .3em .6em
+  padding  7px 0px
+  min-width 92px
   border 1px solid $color-text
   border-radius 2px
   cursor pointer
   display flex
   align-items center
   justify-content center
-  
+
+  span
+    line-height 1
+
+  i
+    color $color-text
+    font-size 15px
+    padding-right 5px
+    
   &:hover
-    color white
     border 1px solid white
+    span 
+      color white
+    i
+      color white
+       
   &:active
-    background rgba(0, 0, 0, .15)
+    background rgba(0, 0, 0, .25)
 

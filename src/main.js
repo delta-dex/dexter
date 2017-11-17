@@ -7,6 +7,8 @@ import router from './router'
 import store from './store'
 import moment from 'moment'
 
+import BigNumber from 'big-number'
+window.bn = BigNumber
 
 // Sync the store with the router
 sync(store, router)
@@ -21,9 +23,9 @@ window.moment = moment
 Vue.config.productionTip = false
 
 // Move to Service Worker?
-store.dispatch("users/load_user")
+// store.dispatch("users/load_user")
 window.onbeforeunload = function(event) {
-  store.dispatch("users/save_user")
+  // store.dispatch("users/save_user")
 };
 
 new Vue({
