@@ -3,20 +3,20 @@
   .header
     span TRADE HISTORY
   .body
-    table
-      thead
-        tr
-          th Volume
-          th Price
-          th Time
-      tbody
-        tr(v-for='trade in trades' :class="{'buy': trade.side == 'buy', 'sell': trade.side == 'sell' }" @click="goToTx(trade.txHash)")
-          td.volume
-            span {{parseFloat(trade.amount).toFixed(3)}}
-          td.price
-            span {{priceFormat(trade.price)}}
-          td.time
-            span {{timeFormat(trade.date)}}
+    .trade-list-header
+      span.volume Volume
+      span.price Price
+      span.time Time
+    .trade-list
+      .trade-container(v-for='trade in trades')
+        .trade(:class="{'buy': trade.side == 'buy', 'sell': trade.side == 'sell' }" @click="goToTx(trade.txHash)")
+          .info.volume-container(:style="tradeStyle(trade)")
+            span.volume {{parseFloat(trade.amount).toFixed(3)}}
+          .info.price-container
+            span.price {{priceFormat(trade.price)}}
+          .info.time-container
+            span.time {{timeFormat(trade.date)}}
+
 
 </template>
 
@@ -53,12 +53,31 @@ export default {
     },
     goToTx(tx){
       window.open('https://etherscan.io/tx/' + tx)
+    },
+    tradeStyle(trade){
+      let total = trade.amount * trade.price
+      let percent = Math.ceil((total / this.maxAmount) * 100)
+      let color = "rgba(132,247,102,.6) "
+      if(trade.side == "sell"){
+        color = "rgba(255,105,57,.55) "
+      }
+      let style = "background: linear-gradient(to right," + color + percent + "%, rgba(0, 0, 0, 0)" + percent + "%)"
+      return style
     }
   },
   computed: {
     ...mapGetters([
 
     ]),
+    maxAmount(){
+      let max = 0
+      this.trades.forEach(t => {
+        if((t.amount * t.price) > max){
+          max = t.amount * t.price
+        }
+      })
+      return max
+    }
   },
 
   mounted(){
@@ -82,40 +101,79 @@ export default {
     overflow scroll
     height 100%
 
-    table
-      width 100%
-      border-collapse collapse
-      table-layout fixed
-      th
-        padding 3px
+    .trade-list-header
+      display flex
+      flex-basis 100%
+      padding 3px 0px
+      align-items center
+      // justify-content space-around
+      border-bottom solid 1px lighten($color-component-background, 13%)
+      
+      span
+        text-align right
         font-size 13px
-        font-weight 400        
-        border-bottom solid 1px lighten($color-component-background, 13%) 
-      td
-        font-size 11px
-        font-weight 700
-        
+        font-weight 400
+        flex-basis 33%
         &.volume
-          text-align right
-          padding-right 5%
+          flex-basis 40%
         &.price
+          flex-basis 35%
           text-align center
         &.time
+          flex-basis 25%
           text-align center
-          
-      tbody
-        overflow scroll
+    .trade-list
+      display block
+      flex-basis 100%
+      overflow scroll
+      flex-wrap wrap
+      height 100%
+      overflow scroll
+
+      .trade-container
+        display flex
+        flex-basis 100%
+        cursor pointer
         
-        tr
-          cursor pointer
+        .trade
+          display flex
+          flex-basis 100%
+          align-items center
+          justify-content space-around
+
+          
+          span
+            font-size 11px
+            font-weight 700
+            line-height 1
+
+          .info
+            display flex
+            flex-basis 33%
+            line-height 1
+            align-items center
+            justify-content center
+            
+          .volume-container
+            justify-content flex-end
+            flex-basis 40%
+            height 100%
+          .price-container
+            line-height 1
+            flex-basis 35%
+            justify-content center
+            padding 2px 0px
+            
+          .time-container
+            line-height 1
+            flex-basis 25%
+            
           &.sell
-            td.price
-              span
-                color $color-red
+            span.price
+              color $color-red
           &.buy
-            td.price
-              span
-                color $color-green
+            span.price
+              color $color-green
               
           &:hover
             background lighten($color-component-background, 15%)

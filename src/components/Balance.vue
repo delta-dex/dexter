@@ -6,10 +6,10 @@
     .balance-container
       .eth.balance-row
         span.currency ETH
-        span.amount {{edEthBalance}} 
+        span.amount {{edEthBalance.toFixed(10)}} 
       .alt.balance-row(v-if="current_market")
         span.currency {{current_market.currency}}
-        span.amount {{edTokenBalance}}
+        span.amount {{edTokenBalance.toFixed(10)}}
     .action-container
       div.button.deposit(@click="openModal('DepositModal')")
         i.material-icons eject

@@ -10,11 +10,18 @@ const state = {
   current_market_orders: [],
   current_market_buy_orders: [],
   current_market_sell_orders: [],
+  order_form: {
+    order_type: "buy",
+    price: 0.00,
+    volume: 0.00,
+    expires: null,
+  },
 }
 
 
 // Getters
 const getters = {
+  order_form: (state) => state.order_form,
   orders: (state) => {
     return state.buy_orders.concat(state.sell_orders)
   },
@@ -74,7 +81,7 @@ const getters = {
         } else {
           return false
         }
-      })      
+      }).reverse()
     } else {
       return state.sell_orders
     }
@@ -103,6 +110,9 @@ const mutations = {
   ["ADD_SELL_ORDERS"] (state, orders) {
     state.sell_orders = formatOrders(orders).concat(state.sell_orders)
   },
+  ["UPDATE_ORDER_FORM"] (state, form) {
+    state.order_form = form
+  },
 }
 
 // Actions
@@ -112,7 +122,10 @@ const actions = {
       commit("ADD_BUY_ORDERS", orders.buys)
       commit("ADD_SELL_ORDERS", orders.sells)
     })
-  }
+  },
+  creat_order: ({commit, state}, {side, expires, price, amount, token, user}) => {
+    APIs.EtherDelta.createOrder(side, expires, price, amount, token, user)
+  },
 }
 
 

@@ -78,24 +78,30 @@ const actions = {
       user: rootState.users.address
     })
 
-    // On New market
-    APIs.EtherDelta.socket.once('market', (market) => {
-      log("market!!!!!!:", market)
-      let markets = []
-      for(let key in market.returnTicker){
-        let m = market.returnTicker[key]
-        m.currency = key.split("_")[1]
-        markets.push(m)
-      }
-      
-      commit("UPDATE_MARKETS", markets)
-      commit("trades/UPDATE_TRADES", market.trades, {root: true})
-      commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
-      commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
-      
-      dispatch("orders/watch_orders", {}, {root: true})
-      dispatch("trades/watch_trades", {}, {root: true})
-      
+    return new Promise((resolve, reject) => {
+      APIs.EtherDelta.socket.once('market', (market) => {
+        if(market.orders && market.returnTicker && market.trades){
+          resolve(market)
+        } else {
+          reject(market)
+        }
+        log("market!!!!!!:", market)
+        let markets = []
+        for(let key in market.returnTicker){
+          let m = market.returnTicker[key]
+          m.currency = key.split("_")[1]
+          markets.push(m)
+        }
+        
+        commit("UPDATE_MARKETS", markets)
+        commit("trades/UPDATE_TRADES", market.trades, {root: true})
+        commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
+        commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
+        
+        dispatch("orders/watch_orders", {}, {root: true})
+        dispatch("trades/watch_trades", {}, {root: true})
+        
+      })
     })
   },
 

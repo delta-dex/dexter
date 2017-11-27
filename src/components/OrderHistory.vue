@@ -2,25 +2,38 @@
 .order-history.component
   .header
     span ORDERS
+
+    .left
+      .option-container
+        span Limit
+        input(v-model="limit" type="number")
+      // .option-container
+      //   span Aggregate
+      //   input(v-model="agg" type="number" step=".01" min="0")
+        
   .body
-    table
-      thead
-        tr
-          th Volume
-          th Price
-          // th Total
-          th Time
-      tbody
-        tr.sell(v-for='sell in sells')
-          td.volume {{sell.amount.toFixed(3)}}
-          td.price {{priceFormat(sell.price)}}
-          // td.total {{priceFormat(buy.amount * buy.price)}}        
-          td.time {{timeFormat(sell.updated)}}
-        tr.buy(v-for='buy in buys')
-          td.volume {{buy.amount.toFixed(3)}}
-          td.price {{priceFormat(buy.price)}}
-          // td.total {{priceFormat(sell.amount * sell.price)}}        
-          td.time {{timeFormat(buy.updated)}}
+    .order-list-header
+      span.volume Volume
+      span.price Price
+      span.time Time
+    .order-list
+      .order-container(v-for='order in agg_sells')
+        .order.sell(@click="onOrderSelected(order, 'buy')")
+          .info.volume-container(:style="volumePercentStyle(order, 'sell')")
+            span.volume {{parseFloat(order.amount).toFixed(3)}}
+          .info.price-container
+            span.price {{priceFormat(order.price)}}
+          .info.time-container
+            span.time {{timeFormat(order.updated)}}
+      .order-container(v-for='order in agg_buys')
+        .order.buy(@click="onOrderSelected(order, 'sell')")
+          .info.volume-container(:style="volumePercentStyle(order, 'buy')")
+            span.volume {{parseFloat(order.amount).toFixed(3)}}
+          .info.price-container
+            span.price {{priceFormat(order.price)}}
+          .info.time-container
+            span.time {{timeFormat(order.updated)}}
+            
 </template>
 
 <script>
@@ -29,12 +42,15 @@ export default {
   name: 'OrderHistory',
   data(){
     return {
+      orders: [],
       dateFormatter: new Intl.DateTimeFormat('en-US', {
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
         hour12: false,        
-      })
+      }),
+      agg: .01,
+      limit: 20
     }
   },
   props: {
@@ -48,25 +64,97 @@ export default {
     },    
   },
   methods: {
-    volumeFormat(volume){
-      return Math.abs(parseFloat(volume))
-    },
+    ...mapMutations({
+      updateOrderForm: 'orders/UPDATE_ORDER_FORM'
+    }),
     priceFormat(price){
       return parseFloat(price).toFixed(10)
     },
     timeFormat(dateString){
       let d = new Date(dateString)
       return this.dateFormatter.format(d)
+    },
+    onOrderSelected(order, type){
+      log(order)
+      let data = {
+        order_type: type,
+        price: order.price,
+        volume: order.amount,
+      }
+      this.updateOrderForm(data)
+    },
+    aggregate(orders){
+      // let agg_orders = []
+      // orders.forEach(order => {
+      //   agg_orders.filter(agg_order => {
+      //     if(agg_order.price < order.price * (1/this.agg))
+      //   })
+
+      // })
+    },
+    volumePercentStyle(order, side){
+      let total = order.amount * order.price
+      let percent = Math.ceil((total / this.maxAmount) * 100)
+      let color = "rgba(132,247,102,.6) "
+      if(side == "sell"){
+        color = "rgba(255,105,57,.55) "
+      }
+      let style = "background: linear-gradient(to right," + color + percent + "%, rgba(0, 0, 0, 0)" + percent + "%)"
+      return style
     }
+    
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters({
+      
+    }),
+    agg_buys(){
+      let agg_buys = this.buys
+          .slice(0, this.limit)
+          .sort((a, b) => { 
+            if(a.price > b.price){
+              return -1
+            }
+            if(a.price < b.price){
+              return 1
+            }
+            return 0
+          })
 
-    ]),
+      return agg_buys
+    },
+    agg_sells(){
+      let agg_sells = this.sells
+          .slice(Math.max(this.sells.length - this.limit, 1))
+          .sort((a, b) => { 
+            if(a.price > b.price){
+              return -1
+            }
+            if(a.price < b.price){
+              return 1
+            }
+            return 0
+          })
+      return agg_sells
+    },
+    maxAmount(){
+      let max = 0
+      this.agg_sells.forEach(t => {
+        if((t.amount * t.price) > max){
+          max = t.amount * t.price
+        }
+      })
+      this.agg_buys.forEach(t => {
+        if((t.amount * t.price) > max){
+          max = t.amount * t.price
+        }
+      })
+      return max
+    }
   },
 
   mounted(){
-
+    
   }
 }
 </script>
@@ -79,44 +167,108 @@ export default {
   display flex
   flex-wrap wrap
   height 100%
+
+  .header
+    display flex
+
+    .left
+      display flex
+      margin-left auto
+
+      .option-container
+        display flex
+        align-items center
+        margin-left 20px
+        span
+          font-size 11px
+          font-weight 700
+          color $color-text
+          margin-right 10px
+
+        input
+          font-size 11px
+          width 40px
+          height 20px
+          color $color-text
   
   .body
     display flex
     flex-wrap wrap
     overflow scroll
     height 100%
+
+    .order-list-header
+      display flex
+      flex-basis 100%
+      padding 3px 0px
+      align-items center
+      // justify-content space-around
+      border-bottom solid 1px lighten($color-component-background, 13%)
       
-    table
-      width 100%
-      border-collapse collapse
-      
-      th
-        padding 3px
+      span
+        text-align right
         font-size 13px
-        font-weight 400        
-        border-bottom solid 1px lighten($color-component-background, 13%) 
-      td
-        font-size 11px
-        font-weight 700
-        
+        font-weight 400
+        flex-basis 33%
         &.volume
-          text-align right
-          padding-right 5%
+          flex-basis 40%
         &.price
+          flex-basis 35%
           text-align center
         &.time
+          flex-basis 25%
           text-align center
-          
-      tbody
-        overflow scroll
+    .order-list
+      display block
+      flex-basis 100%
+      overflow scroll
+      flex-wrap wrap
+      height 100%
+      overflow scroll
+
+      .order-container
+        display flex
+        flex-basis 100%
+        cursor pointer
         
-        tr
-          cursor pointer
+        .order
+          display flex
+          flex-basis 100%
+          align-items center
+          justify-content space-around
+
+          
+          span
+            font-size 11px
+            font-weight 700
+            line-height 1
+
+          .info
+            display flex
+            flex-basis 33%
+            line-height 1
+            align-items center
+            justify-content center
+            
+          .volume-container
+            justify-content flex-end
+            flex-basis 40%
+            height 100%
+          .price-container
+            line-height 1
+            flex-basis 35%
+            justify-content center
+            padding 2px 0px
+            
+          .time-container
+            line-height 1
+            flex-basis 25%
+            
           &.sell
-            td.price
+            span.price
               color $color-red
           &.buy
-            td.price
+            span.price
               color $color-green
               
           &:hover

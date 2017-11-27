@@ -4,21 +4,21 @@
     span PLACE ORDER
   .body
     .buy-or-sell
-      div.button.buy(@click="setOrderType('buy')" :class="{'active': orderType == 'buy'}")
+      div.button.buy(@click="orderForm.order_type = 'buy'" :class="{'active': orderForm.order_type == 'buy'}")
         span BUY
-      div.button.sell(@click="setOrderType('sell')" :class="{'active': orderType == 'sell'}")
+      div.button.sell(@click="orderForm.order_type = 'sell'" :class="{'active': orderForm.order_type == 'sell'}")
         span SELL
 
     .price-container
       span.label Price
       .input-container
-        input(placeholder="0.00" type="number" v-model="price")
+        input(placeholder="0.00" type="number" v-model="orderForm.price")
         span.info ETH
 
     .amount-container
       span.label Amount
       .input-container
-        input(placeholder="0.00" type="number", v-model="volume")
+        input(placeholder="0.00" type="number", v-model="orderForm.volume")
         span.info {{current_market.currency}}
 
 
@@ -30,11 +30,11 @@
     .expires-container
       span.label Expires
       .input-container
-        input(placeholder="0" type="number")
+        input(placeholder="0" type="number" v-model="orderForm.expires")
 
     .place-order-container
-      div.button.place-order(@click="placeOrder()" :class="{'sell': orderType == 'sell'}")
-        span PLACE {{orderType.toUpperCase()}} ORDER
+      div.button.place-order(@click="placeOrder()" :class="{'sell': orderForm.order_type == 'sell'}")
+        span PLACE {{orderForm.order_type.toUpperCase()}} ORDER
 </template>
 
 <script>
@@ -43,9 +43,7 @@ export default {
   name: 'OrderForm',
   data(){
     return {
-      orderType: "buy",
-      price: 0.00,
-      volume: 0.00,
+      
     }
   },
   props: {
@@ -54,20 +52,23 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      openModal: "modal/SET_CURRENT_MODAL"
+    }),
     setOrderType(type){
       this.orderType = type
     },
     placeOrder(){
-
+      this.openModal("OrderModal")
     }
   },
   computed: {
-    ...mapGetters([
-
-    ]),
+    ...mapGetters({
+      orderForm: "orders/order_form"
+    }),
     total(){
-      let total = this.price * this.volume
-      return total
+      let total = this.orderForm.price * this.orderForm.volume
+      return total.toFixed(5)
       // return Math.round(total, -2)
     }
   },
@@ -134,8 +135,6 @@ export default {
         display flex
         position relative
         flex-basis 100%
-        input 
-          flex-basis 100%
         .info
           line-height 1
           position absolute

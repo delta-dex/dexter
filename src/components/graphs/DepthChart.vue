@@ -7,7 +7,7 @@
 
       
 </template>
-n
+
 <script>
 import * as d3 from 'd3'
 import moment from 'moment'
@@ -53,7 +53,7 @@ export default {
   
   methods: {
     initChart(){
-      this.margin = {top: 5, right: 45, bottom: 5, left: 5}
+      this.margin = {top: 5, right: 50, bottom: 5, left: -1}
       this.width = this.$refs.chart_container.clientWidth - this.margin.left - this.margin.right
       this.height = this.$refs.chart_container.clientHeight - this.margin.top - this.margin.bottom
 
@@ -68,9 +68,9 @@ export default {
     },
     draw(buy_data, sell_data){
       let all_data = buy_data.concat(sell_data)
-      log("buy_data: ", buy_data)
-      log("sell_data: ", sell_data)
-      log("all_data: ", all_data)
+      // log("buy_data: ", buy_data)
+      // log("sell_data: ", sell_data)
+      // log("all_data: ", all_data)
 
       d3.select("#group").selectAll("*").remove()
 
@@ -109,7 +109,7 @@ export default {
       this.g.append("g")			
         .attr("class", "grid")
         .call(d3.axisLeft(y)
-              .ticks(10)
+              .ticks(15)
               .tickSize(-this.width)
               .tickFormat("")
              )
@@ -137,7 +137,7 @@ export default {
         .attr("transform", "translate(" + this.width + ", 0)")
         .attr("class", "axis")
         .call(d3.axisRight(y)
-              .ticks(10)
+              .ticks(15)
              )
 
     },
@@ -261,7 +261,7 @@ export default {
     
   .body
     height 100%
-    overflow scroll
+    overflow hidden
 
     .chart-container
       height 100%

@@ -2,16 +2,15 @@
 #navbar
   .left
     p.brand {{brand}}
-  .center
+    .break
     .currency-select
-      // span.current-currency(v-if="!currencySelectActive") {{current_market.currency}}
+      // img(src="https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png")
       input(:value="current_market_filter" @focus="currencySelectActive = true" @blur="currencySelectActive = false" @input="onFilterChange")
+      i.material-icons arrow_drop_down
       .type-ahead(v-if="currencySelectActive && markets.length")
-        .market( @mousedown="onMarketSelect('ALL TOKENS')")
-          span ALL TOKENS
-
         .market(v-for="market in markets" @mousedown="onMarketSelect(market)")
           span {{market.currency}}
+  .center
   .right
     span user
       
@@ -67,6 +66,7 @@ export default {
 
 
 <style lang="stylus">
+@import "../styles/main.styl"
 
 #navbar
   height 100%
@@ -78,28 +78,49 @@ export default {
 
   .left
     flex-basis 25%
-    margin-left 1em    
+    margin-left 1em
+    display flex
+    align-items center
+    
     .brand
       font-family 'Cinzel', serif !important
       font-size 36px
       color  rgba(44,53,57, 1)
       font-weight bold
+      margin-right 20px
 
-  .center
-    flex-grow 1
-    display flex
-    margin-left auto
-    margin-right auto
-    justify-content center
-    
+    .break
+      border-radius 3px
+      width 1px
+      height 35px
+      background rgba(44,53,57, .8)
+      margin-right 20px
+      
+      
     .currency-select
       position relative
+      img
+        position absolute
+        left -20px
+      
       input
         font-size 22px
         width 150px
         text-transform uppercase
         border none
         cursor pointer
+        color $color-text-invert
+        font-size 24px
+        background white
+        font-weight 300
+        border 1px solid rgba(0, 0, 0, .1)
+
+      i
+        color rgba(0, 0, 0, .6)
+        font-size 24px
+        position absolute
+        top 5px
+        right 20px
         
       .type-ahead
         background white
@@ -122,9 +143,11 @@ export default {
             
           span
             margin-left 10px
+            font-size 20px
             color rgba(0,0,0, .8)
 
-          
+  .center
+    flex-grow 1
 
   .right
     flex-basis 25%    

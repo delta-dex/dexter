@@ -3,7 +3,8 @@ transition(name="fade" mode='out-in')
   .modal-loader(v-if="currentModal" @click="close" ref="modal_loader")
     .modal-container(ref="modal_container")
       DepositModal(v-if="currentModal === 'DepositModal'")
-      WithdrawModal(v-if="currentModal === 'WithdrawModal'")      
+      WithdrawModal(v-if="currentModal === 'WithdrawModal'")
+      OrderModal(v-if="currentModal === 'OrderModal'")      
     
 </template>
 
@@ -11,12 +12,14 @@ transition(name="fade" mode='out-in')
 import { mapGetters, mapMutations } from 'vuex'
 import DepositModal from '@/components/DepositModal'
 import WithdrawModal from '@/components/WithdrawModal'
+import OrderModal from '@/components/OrderModal'
 
 export default {
   name: 'ModalLoader',
   components: {
     DepositModal,
     WithdrawModal,
+    OrderModal,
   },
   data(){
     return {

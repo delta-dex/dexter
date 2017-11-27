@@ -57,7 +57,14 @@ export default {
     ...mapMutations({
       updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
     }),
-    
+    initMarket(current_market){
+      this.updateCurrentMarket(current_market).then(market => {
+        log(market)
+      }, error => {
+        log("rejected")
+        this.initMarket()
+      })
+    }
   },
   created(){
     let current_market = {
@@ -66,8 +73,8 @@ export default {
     }
 
     APIs.EtherDelta.initSocket().then(socket => {
-      this.updateCurrentMarket(current_market)
-      this.updateCurrentMarketFilter(current_market.currency)      
+      this.updateCurrentMarketFilter(current_market.currency)
+      this.initMarket(current_market)
     })
 
     this.updateCurrentWallet()
@@ -92,10 +99,10 @@ export default {
     flex-basis 15%
   
   .order-history-container
-    flex-basis 25%
+    flex-basis 35%
     
   .chart-container
-    flex-basis 15%
+    flex-basis 25%
   
   .trade-history-container
     margin-left auto
