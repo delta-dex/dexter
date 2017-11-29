@@ -128,7 +128,6 @@ export default {
       overflow scroll
       flex-wrap wrap
       height 100%
-      overflow scroll
 
       .trade-container
         display flex

@@ -56,17 +56,25 @@ export default {
     }),
     ...mapMutations({
       updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
+      openModal: "modal/SET_CURRENT_MODAL",
     }),
     initMarket(current_market){
       this.updateCurrentMarket(current_market).then(market => {
-        log(market)
+        this.openModal(null)
       }, error => {
-        log("rejected")
-        this.initMarket()
+        this.initMarket(current_market)
       })
     }
   },
+  watch: {
+    trades: function(){
+      if(this.trades.length && this.current_market){
+        document.title = this.current_market.currency + " " + this.trades[0].price
+      }
+    }
+  },
   created(){
+    this.openModal("LoadingOverlay")
     let current_market = {
       tokenAddr: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
       currency: "RDN"

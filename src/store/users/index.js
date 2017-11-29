@@ -91,6 +91,9 @@ var actions = {
       })
     })
 
+    log("updating wallet")
+    log(wallet)
+
     commit("UPDATE_CURRENT_WALLET", wallet)
   },
   update_ed_wallet: ({ commit, state }) => {
@@ -106,6 +109,9 @@ var actions = {
         token.balance = results
       })
     })
+    
+    log("updating ed wallet")
+    log(wallet)
 
     commit("UPDATE_ED_WALLET", wallet)
   },

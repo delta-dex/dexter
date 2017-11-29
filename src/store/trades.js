@@ -10,7 +10,7 @@ const state = {
 const getters = {
   trades: (state) => state.trades,
   current_market_trades: (state, commit, rootState) => {
-    if(rootState.markets.current_market){
+    if(rootState.markets.current_market && state.trades.length){
       return state.trades.filter(trade => {
         if(trade.tokenAddr == rootState.markets.current_market.tokenAddr){
           return true

@@ -10,6 +10,9 @@
       .type-ahead(v-if="currencySelectActive && markets.length")
         .market(v-for="market in markets" @mousedown="onMarketSelect(market)")
           span {{market.currency}}
+    .break          
+    .price-container(v-if="trades.length")
+      span.price {{trades[0].price}}
   .center
   .right
     span user
@@ -31,6 +34,7 @@ export default {
   methods: {
     ...mapMutations({
       updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
+      openModal: "modal/SET_CURRENT_MODAL",
     }),
     ...mapActions({
       updateCurrentMarket: "markets/update_current_market",      
@@ -39,11 +43,14 @@ export default {
       this.updateCurrentMarketFilter(e.target.value)
     },
     onMarketSelect(market){
+      this.openModal("LoadingOverlay")
       if(market === "ALL TOKENS"){
         this.updateCurrentMarket(null)
         this.updateCurrentMarketFilter("ALL TOKENS")
       } else {
-        this.updateCurrentMarket(market)
+        this.updateCurrentMarket(market).then(()=>{
+          this.openModal(null)
+        })
         this.updateCurrentMarketFilter(market.currency)
       }
     }
@@ -53,7 +60,8 @@ export default {
       brand: 'brand',
       current_market: 'markets/current_market',
       current_market_filter: 'markets/current_market_filter',
-      markets: 'markets/filtered_markets'
+      markets: 'markets/filtered_markets',
+      trades: 'trades/current_market_trades',
     }),
   },
   
@@ -105,15 +113,15 @@ export default {
       
       input
         font-size 22px
-        width 150px
+        width 100px
         text-transform uppercase
         border none
         cursor pointer
         color $color-text-invert
         font-size 24px
         background white
-        font-weight 300
-        border 1px solid rgba(0, 0, 0, .1)
+        font-weight 400
+        // border 1px solid rgba(0, 0, 0, .1)
 
       i
         color rgba(0, 0, 0, .6)
@@ -125,10 +133,13 @@ export default {
       .type-ahead
         background white
         position absolute
-        width 200px
+        width 100px
+        top 40px
+        left 0px
         max-height 300px
         overflow scroll
         border solid 1px rgba(0, 0, 0, .1)
+        border-top none
         box-shadow 3px 4px 2px 0px rgba(0, 0, 0, .4);
         display flex
         z-index 3
@@ -146,6 +157,11 @@ export default {
             font-size 20px
             color rgba(0,0,0, .8)
 
+    .price-container
+      .price
+        color $color-text-invert
+        font-weight 400
+        
   .center
     flex-grow 1
 

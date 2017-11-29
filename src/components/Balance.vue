@@ -32,13 +32,13 @@ export default {
   },
   props: {
     current_market: {
-      default: {}
+      default: () => {}
     },
     current_wallet: {
-      default: {}
+      default: () => {}
     },
     ed_wallet: {
-      default: {}
+      default: () => {}
     }
   },
   methods: {

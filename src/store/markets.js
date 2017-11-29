@@ -4,8 +4,8 @@ import Vue from 'vue'
 // State
 const state = {
   markets: [],
-  current_market: null,
-  current_market_filter: "ALL TOKENS",
+  current_market: {},
+  current_market_filter: "",
   filtered_markets: [],
   sorted_markets: []
 }
@@ -80,27 +80,28 @@ const actions = {
 
     return new Promise((resolve, reject) => {
       APIs.EtherDelta.socket.once('market', (market) => {
+        log(market)
         if(market.orders && market.returnTicker && market.trades){
+          let markets = []
+          for(let key in market.returnTicker){
+            let m = market.returnTicker[key]
+            m.currency = key.split("_")[1]
+            markets.push(m)
+          }
+          
+          commit("UPDATE_MARKETS", markets)
+          commit("trades/UPDATE_TRADES", market.trades, {root: true})
+          commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
+          commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
+          
+          dispatch("orders/watch_orders", {}, {root: true})
+          dispatch("trades/watch_trades", {}, {root: true})
+          dispatch("users/update_ed_wallet", {}, {root: true})
+          dispatch("users/update_current_wallet", {}, {root: true})
           resolve(market)
         } else {
-          reject(market)
+          reject()
         }
-        log("market!!!!!!:", market)
-        let markets = []
-        for(let key in market.returnTicker){
-          let m = market.returnTicker[key]
-          m.currency = key.split("_")[1]
-          markets.push(m)
-        }
-        
-        commit("UPDATE_MARKETS", markets)
-        commit("trades/UPDATE_TRADES", market.trades, {root: true})
-        commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
-        commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
-        
-        dispatch("orders/watch_orders", {}, {root: true})
-        dispatch("trades/watch_trades", {}, {root: true})
-        
       })
     })
   },

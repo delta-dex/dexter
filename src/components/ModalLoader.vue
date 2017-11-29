@@ -4,7 +4,8 @@ transition(name="fade" mode='out-in')
     .modal-container(ref="modal_container")
       DepositModal(v-if="currentModal === 'DepositModal'")
       WithdrawModal(v-if="currentModal === 'WithdrawModal'")
-      OrderModal(v-if="currentModal === 'OrderModal'")      
+      OrderModal(v-if="currentModal === 'OrderModal'")
+      LoadingOverlay(v-if="currentModal === 'LoadingOverlay'")      
     
 </template>
 
@@ -13,6 +14,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import DepositModal from '@/components/DepositModal'
 import WithdrawModal from '@/components/WithdrawModal'
 import OrderModal from '@/components/OrderModal'
+import LoadingOverlay from '@/components/LoadingOverlay'
 
 export default {
   name: 'ModalLoader',
@@ -20,6 +22,7 @@ export default {
     DepositModal,
     WithdrawModal,
     OrderModal,
+    LoadingOverlay,
   },
   data(){
     return {

@@ -1,152 +1,112 @@
 <template lang="pug">
-div#currency-page
-  div.top
-    div.tab(v-if="currency_page_tab == 'charts'")
-      div.charts
-        h3 Price
-        line-graph(:data="currency_history.price")
-        h3 Market Cap
-        line-graph(:data="currency_history.market_cap")
-        h3 Volume
-        line-graph(:data="currency_history.volume")
-
-
-    div.tab(v-if="currency_page_tab == 'shapeshift'")
-      div.shapeshift-rates
-        h2 ShapeShift 
-        div.quote(v-for="quote in filtered_shapeshift_rates")
-          p.currency {{quote.pair.split("_")[1]}}
-          p.rate {{quote.rate}}
-      
+#exchange-page
+  .left-container
+    balance(:current_market="current_market" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
+    order-form(:current_market="current_market" v-if="current_market")  
     
-  div.bottom
-    div.icon
-      i.material-icons insert_chart
-    div.icon
-      i.material-icons dialpad
-    div.icon
-      i.material-icons compare_arrows
-    
+  .order-history-container
+    order-history(:buys="buy_orders", :sells="sell_orders")
+
+  .chart-container  
+    depth-chart(:buys="buy_orders", :sells="sell_orders")
+  
+  .trade-history-container
+    trade-history(:trades="trades")
+
   
 </template>
 
 <script>
-import TimeSeries from '@/components/graphs/TimeSeries'
-import LineGraph from '@/components/graphs/Line'
+import Balance from "@/components/Balance"
+import TradeHistory from "@/components/TradeHistory"
+import OrderHistory from "@/components/OrderHistory"
+import OrderForm from "@/components/OrderForm"
+import DepthChart from "@/components/graphs/DepthChart"
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
-import { mapGetters } from 'vuex'
-import { mapActions } from 'vuex'
+import APIs from '../store/apis'
 
 export default {
-  name: 'CurrencyPage',
+  name: 'ExchangePage',
   components: {
-    TimeSeries,
-    LineGraph
+    TradeHistory,
+    OrderHistory,
+    OrderForm,
+    DepthChart,
+    Balance,
   },
-  props: {
-    
-
-  },
-  data () {
-    return {
-      currency_page_tab: "charts",
-    }
+  computed: {
+    ...mapGetters({
+      current_market: 'markets/current_market',
+      trades: 'trades/current_market_trades',
+      buy_orders: 'orders/current_market_buy_orders',
+      sell_orders: 'orders/current_market_sell_orders',
+      current_wallet: 'users/current_wallet',
+      ed_wallet: 'users/ed_wallet',
+    })
   },
   methods: {
-    ...mapActions([
-      'fetch_currency_history',
-    ]),
-  },
-
-  computed: {
-    ...mapGetters([
-      'currency',
-      'currency_history',
-      'filtered_shapeshift_rates',
-    ])
-  },
-  mounted(){
-    if(this.$route.params.name){
-      this.fetch_currency_history(this.$route.params.name)
-    } else {
-      this.unwatch = this.$watch('currency', ()=>{
-        if(this.currency.id){
-          _fetch_currency_history()
-        }
+    ...mapActions({
+      watchOrders: 'orders/watch_orders',
+      watchTrades: 'trades/watch_trades',
+      getMarkets: 'markets/get_markets',
+      updateCurrentWallet: 'users/update_current_wallet',
+      updateEdWallet: 'users/update_ed_wallet',
+      updateCurrentMarket: "markets/update_current_market",
+    }),
+    ...mapMutations({
+      updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
+    }),
+    initMarket(current_market){
+      this.updateCurrentMarket(current_market).then(market => {
+        log(market)
+      }, error => {
+        log("rejected")
+        this.initMarket()
       })
-      let _fetch_currency_history = function(){
-        this.fetch_currency_history(this.currency.symbol)
-        this.unwatch()
-      }.bind(this)
     }
   },
+  created(){
+    let current_market = {
+      tokenAddr: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
+      currency: "RDN"
+    }
+
+    APIs.EtherDelta.initSocket().then(socket => {
+      this.updateCurrentMarketFilter(current_market.currency)
+      this.initMarket(current_market)
+    })
+
+    this.updateCurrentWallet()
+    this.updateEdWallet()
+  },
+  mounted(){
+
+  }
 }
 </script>
 
-
-<style lang="stylus">
-@import "../styles/main.styl"
-
-#currency-page
+<style lang="stylus" scoped>
+#exchange-page
   display flex
-  flex-wrap wrap
   flex-basis 100%
+  height 100%
   
-  .top
-    height calc(100vh - 160px)
-    display flex
-    flex-basis 100%
-    overflow scroll
-    padding 1em
-
-    .tab
-      flex-basis 100%
-
-    h3
-      margin-bottom 1em
-
-    .quote
-      display flex
-      flex-basis 100%
-      align-items center
-      justify-content space-between
-      margin-bottom 10px
+  .left-container
+    flex-basis 15%
     
-
-  .bottom
-    display flex
-    flex-basis 100%
-    width 100%
-    position absolute
-    bottom 0px
-    height 50px
-    align-items center
-    justify-content space-evenly
-
-    .icon
-      cursor pointer
-      justify-content center
-      flex-grow 1
-      display flex
-      border-top 1px solid rgba(0, 0, 0, .2)
-      border-right 1px solid rgba(0, 0, 0, .2)
-      align-items center
-      height 100%
-
-      &:last-child 
-        border-right none
-
-      &:hover
-        background $orange
-        i
-          color white
-
-      &:active
-        background $orange
-        i
-          color white
-        
-      i
-        font-size 34px
+  .order-form-container
+    flex-basis 15%
+  
+  .order-history-container
+    flex-basis 35%
+    
+  .chart-container
+    flex-basis 25%
+  
+  .trade-history-container
+    margin-left auto
+    flex-basis 25%
+  
   
 </style>

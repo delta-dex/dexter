@@ -50,7 +50,7 @@ export default {
         hour12: false,        
       }),
       agg: .01,
-      limit: 20
+      limit: 30
     }
   },
   props: {
@@ -194,7 +194,6 @@ export default {
   .body
     display flex
     flex-wrap wrap
-    overflow scroll
     height 100%
 
     .order-list-header
@@ -202,7 +201,6 @@ export default {
       flex-basis 100%
       padding 3px 0px
       align-items center
-      // justify-content space-around
       border-bottom solid 1px lighten($color-component-background, 13%)
       
       span
