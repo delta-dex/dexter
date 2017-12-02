@@ -50,7 +50,7 @@ export default {
         hour12: false,        
       }),
       agg: .01,
-      limit: 30
+      limit: 20
     }
   },
   props: {
@@ -167,6 +167,7 @@ export default {
   display flex
   flex-wrap wrap
   height 100%
+  overflow hidden
 
   .header
     display flex

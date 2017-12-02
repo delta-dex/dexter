@@ -81,7 +81,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       APIs.EtherDelta.socket.once('market', (market) => {
         log(market)
-        if(market.orders && market.returnTicker && market.trades){
+        if(market.orders && market.returnTicker && market.trades && market.myTrades && market.myOrders){
           let markets = []
           for(let key in market.returnTicker){
             let m = market.returnTicker[key]

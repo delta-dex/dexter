@@ -11,7 +11,7 @@
       span.price Price
       span.time Time
     .order-list
-      .order-container(v-for='order in orders')
+      .order-container(v-for='order in orders' v-if="orders.length")
         .order(:class="{'buy': order.side == 'buy', 'sell': order.side == 'sell'}")
           .info.type-container
             span.type {{order.side}}
@@ -21,7 +21,7 @@
             span.price {{priceFormat(order.price)}}
           .info.time-container
             span.time {{timeFormat(order.date)}}
-            
+
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
   name: 'OrderHistory',
   data(){
     return {
-      openOrders: true
+      openOrders: false
     }
   },
   props: {
@@ -70,7 +70,7 @@ export default {
       
     }),
     orders(){
-      if(this.openOrders){
+      if(!this.openOrders){
         return this.filled_buys.concat(this.filled_sells).sort((a,b) => {
           if(a.date > b.date){
             return 1
@@ -109,6 +109,7 @@ export default {
   display flex
   flex-wrap wrap
   height 100%
+  overflow hidden
 
   .header
     display flex
