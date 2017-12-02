@@ -108,6 +108,7 @@ export default {
       align-items center
       // justify-content space-around
       border-bottom solid 1px lighten($color-component-background, 13%)
+      box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
       
       span
         text-align right

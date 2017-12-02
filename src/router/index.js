@@ -16,7 +16,7 @@ const router = new Router({
     // {path: '/users', name: 'users', component: Pages.UsersPagePortfoliosPage},
     // {path: '/profile', name: 'profile', component: Pages.ProfilePage},
     // {path: '/portfolios', name: 'portfolios', component: Pages.PortfoliosPage},
-    // {path: '/portfolios/:id', name: 'portfolio', component: Pages.PortfolioPage},
+    {path: '/portfolios/:id', name: 'portfolio', component: Pages.PortfolioPage},
     // {path: '/rumors', name: 'rumors', component: Pages.RumorsPage},
   ],
 })

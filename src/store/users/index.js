@@ -29,6 +29,9 @@ const state = {
       }
     ]    
   },
+  trades: [],
+  buy_orders: [],
+  sell_orders: [],
   wallets: [
     // {
     //   address: "",
@@ -50,6 +53,27 @@ var getters = {
   wallets: state =>  state.wallets,
   lang: state => state.lang,
   address: state => state.address,
+  trades: state => state.trades,
+  filled_buys: (state) => {
+    return state.trades.filter(t => {
+      if(t.side == 'buy'){
+        return true 
+      } else {
+        return false
+      }
+    })
+  },
+  filled_sells: (state) => {
+    return state.trades.filter(t => {
+      if(t.side == 'sell'){
+        return true 
+      } else {
+        return false
+      }
+    })
+  },
+  buy_orders: state => state.buy_orders,
+  sell_orders: state => state.sell_orders,
 }
 
 // Mutations
@@ -69,6 +93,16 @@ var mutations = {
   ["UPDATE_WALLETS"] (state, wallets) {
     state.wallets = wallets
   },
+  ["UPDATE_TRADES"] (state, trades) {
+    state.trades = trades
+  },
+  ["UPDATE_BUY_ORDERS"] (state, orders) {
+    state.buy_orders = orders
+  },
+  ["UPDATE_SELL_ORDERS"] (state, orders) {
+    state.sell_orders = orders
+  },
+  
 }
 
 // Actions
@@ -91,9 +125,6 @@ var actions = {
       })
     })
 
-    log("updating wallet")
-    log(wallet)
-
     commit("UPDATE_CURRENT_WALLET", wallet)
   },
   update_ed_wallet: ({ commit, state }) => {
@@ -110,9 +141,6 @@ var actions = {
       })
     })
     
-    log("updating ed wallet")
-    log(wallet)
-
     commit("UPDATE_ED_WALLET", wallet)
   },
   

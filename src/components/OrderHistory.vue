@@ -1,67 +1,57 @@
 <template lang="pug">
 .order-history.component
   .header
-    span ORDERS
-
-    .left
-      .option-container
-        span Limit
-        input(v-model="limit" type="number")
-      // .option-container
-      //   span Aggregate
-      //   input(v-model="agg" type="number" step=".01" min="0")
-        
+    span(@click="openOrders = true" :class="{'active': openOrders}") OPEN ORDERS
+    span(@click="openOrders = false" :class="{'active': !openOrders}") FILLED ORDERS
+    
   .body
     .order-list-header
+      span.Type Type
       span.volume Volume
       span.price Price
       span.time Time
     .order-list
-      .order-container(v-for='order in agg_sells')
-        .order.sell(@click="onOrderSelected(order, 'buy')")
-          .info.volume-container(:style="volumePercentStyle(order, 'sell')")
+      .order-container(v-for='order in orders')
+        .order(:class="{'buy': order.side == 'buy', 'sell': order.side == 'sell'}")
+          .info.type-container
+            span.type {{order.side}}
+          .info.volume-container
             span.volume {{parseFloat(order.amount).toFixed(3)}}
           .info.price-container
             span.price {{priceFormat(order.price)}}
           .info.time-container
-            span.time {{timeFormat(order.updated)}}
-      .order-container(v-for='order in agg_buys')
-        .order.buy(@click="onOrderSelected(order, 'sell')")
-          .info.volume-container(:style="volumePercentStyle(order, 'buy')")
-            span.volume {{parseFloat(order.amount).toFixed(3)}}
-          .info.price-container
-            span.price {{priceFormat(order.price)}}
-          .info.time-container
-            span.time {{timeFormat(order.updated)}}
+            span.time {{timeFormat(order.date)}}
             
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
+import moment from 'moment'
+
 export default {
   name: 'OrderHistory',
   data(){
     return {
-      orders: [],
-      dateFormatter: new Intl.DateTimeFormat('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: false,        
-      }),
-      agg: .01,
-      limit: 30
+      openOrders: true
     }
   },
   props: {
-    buys: {
+    open_buys: {
       type: Array,
       default: () => []
     },
-    sells: {
+    open_sells: {
       type: Array,
       default: () => []
-    },    
+    },
+    filled_buys: {
+      type: Array,
+      default: () => []
+    },
+    filled_sells: {
+      type: Array,
+      default: () => []
+    },
   },
   methods: {
     ...mapMutations({
@@ -72,84 +62,36 @@ export default {
     },
     timeFormat(dateString){
       let d = new Date(dateString)
-      return this.dateFormatter.format(d)
+      return moment(d).fromNow()
     },
-    onOrderSelected(order, type){
-      log(order)
-      let data = {
-        order_type: type,
-        price: order.price,
-        volume: order.amount,
-      }
-      this.updateOrderForm(data)
-    },
-    aggregate(orders){
-      // let agg_orders = []
-      // orders.forEach(order => {
-      //   agg_orders.filter(agg_order => {
-      //     if(agg_order.price < order.price * (1/this.agg))
-      //   })
-
-      // })
-    },
-    volumePercentStyle(order, side){
-      let total = order.amount * order.price
-      let percent = Math.ceil((total / this.maxAmount) * 100)
-      let color = "rgba(132,247,102,.6) "
-      if(side == "sell"){
-        color = "rgba(255,105,57,.55) "
-      }
-      let style = "background: linear-gradient(to right," + color + percent + "%, rgba(0, 0, 0, 0)" + percent + "%)"
-      return style
-    }
-    
   },
   computed: {
     ...mapGetters({
       
     }),
-    agg_buys(){
-      let agg_buys = this.buys
-          .slice(0, this.limit)
-          .sort((a, b) => { 
-            if(a.price > b.price){
-              return -1
-            }
-            if(a.price < b.price){
-              return 1
-            }
-            return 0
-          })
+    orders(){
+      if(this.openOrders){
+        return this.filled_buys.concat(this.filled_sells).sort((a,b) => {
+          if(a.date > b.date){
+            return 1
+          }
+          if(a.date > b.date){
+            return -1
+          } 
+          return 0
+        })
+      } else {
+        return this.open_buys.concat(this.open_sells).sort((a,b) => {
+          if(a.date > b.date){
+            return 1
+          }
+          if(a.date > b.date){
+            return -1
+          } 
+          return 0
+        })
+      }
 
-      return agg_buys
-    },
-    agg_sells(){
-      let agg_sells = this.sells
-          .slice(Math.max(this.sells.length - this.limit, 1))
-          .sort((a, b) => { 
-            if(a.price > b.price){
-              return -1
-            }
-            if(a.price < b.price){
-              return 1
-            }
-            return 0
-          })
-      return agg_sells
-    },
-    maxAmount(){
-      let max = 0
-      this.agg_sells.forEach(t => {
-        if((t.amount * t.price) > max){
-          max = t.amount * t.price
-        }
-      })
-      this.agg_buys.forEach(t => {
-        if((t.amount * t.price) > max){
-          max = t.amount * t.price
-        }
-      })
-      return max
     }
   },
 
@@ -170,26 +112,17 @@ export default {
 
   .header
     display flex
-
-    .left
-      display flex
-      margin-left auto
-
-      .option-container
-        display flex
-        align-items center
-        margin-left 20px
-        span
-          font-size 11px
-          font-weight 700
-          color $color-text
-          margin-right 10px
-
-        input
-          font-size 11px
-          width 40px
-          height 20px
-          color $color-text
+    align-items center
+    justify-content space-around
+    span
+      cursor pointer
+      margin-right 10px
+      color rgba(255, 255, 255, .5) !important
+      transition all .1s
+      
+      &.active
+        color #fff !important
+        border-bottom 1px solid white
   
   .body
     display flex
@@ -202,19 +135,24 @@ export default {
       padding 3px 0px
       align-items center
       border-bottom solid 1px lighten($color-component-background, 13%)
+      background $color-component-background
+      box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
+      justify-content space-around
       
       span
         text-align right
         font-size 13px
         font-weight 400
-        flex-basis 33%
+
+        &.type
+          text-align center
         &.volume
-          flex-basis 40%
+          text-align center
         &.price
-          flex-basis 35%
+          text-align center
+        &.fee
           text-align center
         &.time
-          flex-basis 25%
           text-align center
     .order-list
       display block
@@ -243,33 +181,37 @@ export default {
 
           .info
             display flex
-            flex-basis 33%
             line-height 1
             align-items center
             justify-content center
+            flex-basis 25%
+            flex-grow 1
+            text-align center
+
+          .type-container
+            text-transform uppercase
+            height 100%
+
             
           .volume-container
-            justify-content flex-end
-            flex-basis 40%
+
             height 100%
           .price-container
             line-height 1
-            flex-basis 35%
             justify-content center
             padding 2px 0px
             
           .time-container
             line-height 1
-            flex-basis 25%
             
-          &.sell
-            span.price
-              color $color-red
-          &.buy
-            span.price
-              color $color-green
-              
           &:hover
             background lighten($color-component-background, 15%)
+
+          &.sell
+            span.type
+                color $color-red
+          &.buy
+            span.type
+              color $color-green
           
 </style>

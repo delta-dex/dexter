@@ -1,39 +1,17 @@
 <template lang="pug">
-#exchange-page
-  .left-container
-    balance(:current_market="current_market" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
-    order-form(:current_market="current_market" v-if="current_market")  
-    
-  .order-history-container
-    order-history(:buys="buy_orders", :sells="sell_orders")
-
-  .chart-container  
-    depth-chart(:buys="buy_orders", :sells="sell_orders")
-  
-  .trade-history-container
-    trade-history(:trades="trades")
+#protfolio-page
 
   
 </template>
 
 <script>
-import Balance from "@/components/Balance"
-import TradeHistory from "@/components/TradeHistory"
-import OrderHistory from "@/components/OrderHistory"
-import OrderForm from "@/components/OrderForm"
-import DepthChart from "@/components/graphs/DepthChart"
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-
 import APIs from '../store/apis'
 
 export default {
-  name: 'ExchangePage',
+  name: 'PortfolioPage',
   components: {
-    TradeHistory,
-    OrderHistory,
-    OrderForm,
-    DepthChart,
-    Balance,
+
   },
   computed: {
     ...mapGetters({
@@ -57,26 +35,11 @@ export default {
     ...mapMutations({
       updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
     }),
-    initMarket(current_market){
-      this.updateCurrentMarket(current_market).then(market => {
-        log(market)
-      }, error => {
-        log("rejected")
-        this.initMarket()
-      })
-    }
   },
   created(){
-    let current_market = {
-      tokenAddr: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
-      currency: "RDN"
-    }
-
     APIs.EtherDelta.initSocket().then(socket => {
-      this.updateCurrentMarketFilter(current_market.currency)
-      this.initMarket(current_market)
-    })
 
+    })
     this.updateCurrentWallet()
     this.updateEdWallet()
   },
@@ -87,26 +50,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-#exchange-page
+#portfolio-page
   display flex
   flex-basis 100%
   height 100%
-  
-  .left-container
-    flex-basis 15%
-    
-  .order-form-container
-    flex-basis 15%
-  
-  .order-history-container
-    flex-basis 35%
-    
-  .chart-container
-    flex-basis 25%
-  
-  .trade-history-container
-    margin-left auto
-    flex-basis 25%
   
   
 </style>

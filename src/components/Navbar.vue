@@ -1,7 +1,7 @@
 <template lang="pug">
 #navbar
   .left
-    p.brand {{brand}}
+    router-link.brand(:to="{name: 'exchange'}" tag="span") {{brand}}
     .break
     .currency-select
       // img(src="https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png")
@@ -15,8 +15,10 @@
       span.price {{trades[0].price}}
   .center
   .right
-    span user
-      
+    .current-address
+      span.address {{address}}
+    router-link(:to="{name: 'portfolio', params: {id: address}}")  
+      i.material-icons pie_chart
 </template>
 
 <script>
@@ -44,15 +46,12 @@ export default {
     },
     onMarketSelect(market){
       this.openModal("LoadingOverlay")
-      if(market === "ALL TOKENS"){
-        this.updateCurrentMarket(null)
-        this.updateCurrentMarketFilter("ALL TOKENS")
-      } else {
-        this.updateCurrentMarket(market).then(()=>{
-          this.openModal(null)
-        })
+      this.updateCurrentMarket(market).then(market => {
         this.updateCurrentMarketFilter(market.currency)
-      }
+        this.openModal(null)
+      }, error => {
+        this.onMarketSelect(market)
+      })
     }
   },
   computed: {
@@ -62,6 +61,7 @@ export default {
       current_market_filter: 'markets/current_market_filter',
       markets: 'markets/filtered_markets',
       trades: 'trades/current_market_trades',
+      address: 'users/address',
     }),
   },
   
@@ -169,6 +169,19 @@ export default {
     flex-basis 25%    
     margin-left auto
     margin-right 1em
-        
+    display flex
+    align-items center
     
+    .current-address
+      margin-right 1em
+      
+      span
+        color $color-text-invert
+        font-weight 400
+
+    i
+      color $color-text-invert
+      font-size 28px
+      cursor pointer
+
 </style>

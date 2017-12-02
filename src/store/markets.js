@@ -93,6 +93,11 @@ const actions = {
           commit("trades/UPDATE_TRADES", market.trades, {root: true})
           commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
           commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
+
+
+          commit("users/UPDATE_TRADES", market.myTrades, {root: true})
+          commit("users/UPDATE_BUY_ORDERS", market.myOrders.buys, {root: true})
+          commit("users/UPDATE_SELL_ORDERS", market.myOrders.sells, {root: true})
           
           dispatch("orders/watch_orders", {}, {root: true})
           dispatch("trades/watch_trades", {}, {root: true})

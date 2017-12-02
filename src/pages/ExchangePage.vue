@@ -4,8 +4,9 @@
     balance(:current_market="current_market" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
     order-form(:current_market="current_market" v-if="current_market")  
     
-  .order-history-container
-    order-history(:buys="buy_orders", :sells="sell_orders")
+  .orders-container
+    order-book(:buys="buy_orders", :sells="sell_orders")
+    order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
 
   .chart-container  
     depth-chart(:buys="buy_orders", :sells="sell_orders")
@@ -20,6 +21,7 @@
 import Balance from "@/components/Balance"
 import TradeHistory from "@/components/TradeHistory"
 import OrderHistory from "@/components/OrderHistory"
+import OrderBook from "@/components/OrderBook"
 import OrderForm from "@/components/OrderForm"
 import DepthChart from "@/components/graphs/DepthChart"
 import { mapGetters, mapActions, mapMutations } from 'vuex'
@@ -31,6 +33,7 @@ export default {
   components: {
     TradeHistory,
     OrderHistory,
+    OrderBook,
     OrderForm,
     DepthChart,
     Balance,
@@ -43,6 +46,10 @@ export default {
       sell_orders: 'orders/current_market_sell_orders',
       current_wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
+      user_filled_buys: 'users/filled_buys',
+      user_filled_sells: 'users/filled_sells',
+      user_sell_orders: 'users/sell_orders',
+      user_buy_orders: 'users/buy_orders',
     })
   },
   methods: {
@@ -106,8 +113,15 @@ export default {
   .order-form-container
     flex-basis 15%
   
-  .order-history-container
+  .orders-container
     flex-basis 35%
+    flex-wrap wrap
+
+    .order-book
+      height 70% !important
+    
+    .order-history
+      height 30% !important
     
   .chart-container
     flex-basis 25%
