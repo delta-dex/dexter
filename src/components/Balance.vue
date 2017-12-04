@@ -7,8 +7,8 @@
       .eth.balance-row
         span.currency ETH
         span.amount {{edEthBalance.toFixed(10)}} 
-      .alt.balance-row(v-if="current_market")
-        span.currency {{current_market.currency}}
+      .alt.balance-row
+        span.currency {{token.name}}
         span.amount {{edTokenBalance.toFixed(10)}}
     .action-container
       div.button.deposit(@click="openModal('DepositModal')")
@@ -31,7 +31,7 @@ export default {
     }
   },
   props: {
-    current_market: {
+    token: {
       default: () => {}
     },
     current_wallet: {
@@ -56,7 +56,7 @@ export default {
     edTokenBalance(){
       let balance = parseFloat("0.0")
       this.ed_wallet.tokens.forEach(token => {
-        if(token.address === this.current_market.tokenAddr){
+        if(token.address === this.token.addr){
           balance = parseFloat(token.balance)
         }
       })

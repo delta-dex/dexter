@@ -7,9 +7,6 @@ const state = {
   orders: [],
   buy_orders: [],
   sell_orders: [],
-  current_market_orders: [],
-  current_market_buy_orders: [],
-  current_market_sell_orders: [],
   order_form: {
     order_type: "buy",
     price: 0.00,
@@ -46,45 +43,6 @@ const getters = {
       }
       return 0
     })
-  },
-  current_market_orders: (state, commit, rootState) => {
-    if(rootState.markets.current_market){
-      return state.orders.filter(order => {
-        if(order.tokenGet == rootState.markets.current_market.tokenAddr){
-          return true
-        } else {
-          return false
-        }
-      })      
-    } else {
-      return state.buy_orders.concat(state.sell_orders)      
-    }
-  },
-  current_market_buy_orders: (state, commit, rootState) => {
-    if(rootState.markets.current_market){
-      return state.buy_orders.filter(order => {
-        if(order.tokenGet == rootState.markets.current_market.tokenAddr){
-          return true
-        } else {
-          return false
-        }
-      })      
-    } else {
-      return state.buy_orders
-    }
-  },
-  current_market_sell_orders: (state, commit, rootState) => {
-    if(rootState.markets.current_market){
-      return state.sell_orders.filter(order => {
-        if(order.tokenGive == rootState.markets.current_market.tokenAddr){
-          return true
-        } else {
-          return false
-        }
-      }).reverse()
-    } else {
-      return state.sell_orders
-    }
   },
 }
 
@@ -123,7 +81,7 @@ const actions = {
       commit("ADD_SELL_ORDERS", orders.sells)
     })
   },
-  creat_order: ({commit, state}, {side, expires, price, amount, token, user}) => {
+  create_order: ({commit, state}, {side, expires, price, amount, token, user}) => {
     APIs.EtherDelta.createOrder(side, expires, price, amount, token, user)
   },
 }

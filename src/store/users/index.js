@@ -32,6 +32,7 @@ const state = {
   trades: [],
   buy_orders: [],
   sell_orders: [],
+  tokens: [],
   wallets: [
     // {
     //   address: "",

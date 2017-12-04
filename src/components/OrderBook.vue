@@ -109,33 +109,21 @@ export default {
       
     }),
     agg_buys(){
-      let agg_buys = this.buys
-          .slice(0, this.limit)
-          .sort((a, b) => { 
-            if(a.price > b.price){
-              return -1
-            }
-            if(a.price < b.price){
-              return 1
-            }
-            return 0
-          })
-
-      return agg_buys
+      return this.buys
+        .slice(0, this.limit)
     },
     agg_sells(){
-      let agg_sells = this.sells
-          .slice(Math.max(this.sells.length - this.limit, 1))
-          .sort((a, b) => { 
-            if(a.price > b.price){
-              return -1
-            }
-            if(a.price < b.price){
-              return 1
-            }
-            return 0
-          })
-      return agg_sells
+      return this.sells
+        .slice(0, this.limit)
+        .sort((a, b) => { 
+          if(a.price > b.price){
+            return -1
+          }
+          if(a.price < b.price){
+            return 1
+          }
+          return 0
+        })
     },
     maxAmount(){
       let max = 0

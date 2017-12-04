@@ -1,8 +1,8 @@
 <template lang="pug">
 #exchange-page
   .left-container
-    balance(:current_market="current_market" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
-    order-form(:current_market="current_market" v-if="current_market")  
+    balance(:token="token" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
+    order-form(:token="token")
     
   .orders-container
     order-book(:buys="buy_orders", :sells="sell_orders")
@@ -40,56 +40,63 @@ export default {
   },
   computed: {
     ...mapGetters({
-      current_market: 'markets/current_market',
-      trades: 'trades/current_market_trades',
-      buy_orders: 'orders/current_market_buy_orders',
-      sell_orders: 'orders/current_market_sell_orders',
+      trades: 'trades/trades',
+      buy_orders: 'orders/buy_orders',
+      sell_orders: 'orders/sell_orders',
       current_wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
       user_filled_buys: 'users/filled_buys',
       user_filled_sells: 'users/filled_sells',
       user_sell_orders: 'users/sell_orders',
       user_buy_orders: 'users/buy_orders',
+      tokens: 'tokens/tokens',
+      token: 'tokens/current_token',
     })
   },
   methods: {
     ...mapActions({
       watchOrders: 'orders/watch_orders',
       watchTrades: 'trades/watch_trades',
-      getMarkets: 'markets/get_markets',
       updateCurrentWallet: 'users/update_current_wallet',
+      updateCurrentMarket: 'markets/update_current_market',
       updateEdWallet: 'users/update_ed_wallet',
-      updateCurrentMarket: "markets/update_current_market",
     }),
     ...mapMutations({
-      updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
       openModal: "modal/SET_CURRENT_MODAL",
+      updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
+      updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
     }),
-    initMarket(current_market){
-      this.updateCurrentMarket(current_market).then(market => {
+    initMarket(){
+      this.updateCurrentMarket().then(market => {
         this.openModal(null)
       }, error => {
-        this.initMarket(current_market)
+        this.initMarket()
       })
     }
   },
   watch: {
     trades: function(){
-      if(this.trades.length && this.current_market){
-        document.title = this.current_market.currency + " " + this.trades[0].price
+      if(this.trades.length){
+        document.title = this.token.name + " " + this.trades[0].price
       }
     }
   },
   created(){
     this.openModal("LoadingOverlay")
-    let current_market = {
-      tokenAddr: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
-      currency: "RDN"
-    }
+    let param_token = null
+    if(this.$route.params.token){
+      param_token = this.tokens.find(t => {
+        return t.name.toLowerCase() == this.$route.params.token.toLowerCase()
+      })
 
+      if(param_token){
+        this.updateCurrentToken(param_token)
+        this.updateTokenFilter(param_token.name)
+      }
+    }
+    
     APIs.EtherDelta.initSocket().then(socket => {
-      this.updateCurrentMarketFilter(current_market.currency)
-      this.initMarket(current_market)
+      this.initMarket()
     })
 
     this.updateCurrentWallet()

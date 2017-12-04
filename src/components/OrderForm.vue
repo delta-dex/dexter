@@ -19,7 +19,7 @@
       span.label Amount
       .input-container
         input(placeholder="0.00" type="number", v-model="orderForm.volume")
-        span.info {{current_market.currency}}
+        span.info {{token.name}}
 
 
     .total-container
@@ -47,7 +47,7 @@ export default {
     }
   },
   props: {
-    current_market: {
+    token: {
       default: null
     }
   },

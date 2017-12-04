@@ -3,21 +3,21 @@
   .left
     router-link.brand(:to="{name: 'exchange'}" tag="span") {{brand}}
     .break
-    .currency-select
+    .token-select
       // img(src="https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png")
-      input(:value="current_market_filter" @focus="currencySelectActive = true" @blur="currencySelectActive = false" @input="onFilterChange")
+      input(:value="token_filter" @focus="tokenSelectActive = true" @blur="tokenSelectActive = false" @input="onFilterChange")
       i.material-icons arrow_drop_down
-      .type-ahead(v-if="currencySelectActive && markets.length")
-        .market(v-for="market in markets" @mousedown="onMarketSelect(market)")
-          span {{market.currency}}
+      .type-ahead(v-if="tokenSelectActive")
+        .token(v-for="token in tokens" @mousedown="onTokenSelect(token)")
+          span {{token.name}}
     .break          
-    .price-container(v-if="trades.length")
+    .price-container(v-if="trades && trades.length")
       span.price {{trades[0].price}}
   .center
   .right
     .current-address
       span.address {{address}}
-    router-link(:to="{name: 'portfolio', params: {id: address}}")  
+    router-link(:to="{name: 'portfolio', params: {address: address}}")  
       i.material-icons pie_chart
 </template>
 
@@ -29,37 +29,38 @@ export default {
   name: 'Navbar',
   data(){
     return {
-      currency: "",
-      currencySelectActive: false
+      token: "",
+      tokenSelectActive: false
     }
   },
   methods: {
     ...mapMutations({
-      updateCurrentMarketFilter: "markets/UPDATE_CURRENT_MARKET_FILTER",
+      updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
+      updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       openModal: "modal/SET_CURRENT_MODAL",
     }),
     ...mapActions({
       updateCurrentMarket: "markets/update_current_market",      
     }),
     onFilterChange(e){
-      this.updateCurrentMarketFilter(e.target.value)
+      this.updateTokenFilter(e.target.value)
     },
-    onMarketSelect(market){
+    onTokenSelect(token){
       this.openModal("LoadingOverlay")
-      this.updateCurrentMarket(market).then(market => {
-        this.updateCurrentMarketFilter(market.currency)
+      this.updateCurrentToken(token)
+      this.updateCurrentMarket().then(market => {
         this.openModal(null)
       }, error => {
-        this.onMarketSelect(market)
+        this.onTokenSelect()
       })
     }
   },
   computed: {
     ...mapGetters({
       brand: 'brand',
-      current_market: 'markets/current_market',
-      current_market_filter: 'markets/current_market_filter',
-      markets: 'markets/filtered_markets',
+      tokens: 'tokens/filtered_tokens',
+      current_token: 'tokens/current_token',
+      token_filter: 'tokens/token_filter',
       trades: 'trades/current_market_trades',
       address: 'users/address',
     }),
@@ -105,7 +106,7 @@ export default {
       margin-right 20px
       
       
-    .currency-select
+    .token-select
       position relative
       img
         position absolute
@@ -144,7 +145,7 @@ export default {
         display flex
         z-index 3
         display block
-        .market
+        .token
           cursor pointer
           flex-basis 100%
           padding 3px 0px
