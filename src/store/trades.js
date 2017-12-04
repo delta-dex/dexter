@@ -4,23 +4,20 @@ import APIs from './apis'
 // State
 const state = {
   trades: [],
+  current_token_trades: []
 }
 
 // Getters
 const getters = {
   trades: (state) => state.trades,
-  current_market_trades: (state, commit, rootState) => {
-    if(rootState.markets.current_market && state.trades.length){
-      return state.trades.filter(trade => {
-        if(trade.tokenAddr == rootState.markets.current_market.tokenAddr){
-          return true
-        } else {
-          return false
-        }
-      })      
-    } else {
-      return state.trades
-    }
+  current_token_trades: (state, commit, rootState) => {
+    return state.trades.filter(trade => {
+      if(trade.tokenAddr == rootState.tokens.current_token.addr){
+        return true
+      } else {
+        return false
+      }
+    })      
   },
 }
 

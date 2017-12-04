@@ -22,27 +22,43 @@ const getters = {
   orders: (state) => {
     return state.buy_orders.concat(state.sell_orders)
   },
-  buy_orders: (state) => {
-    return state.buy_orders.sort((a, b) => { 
-      if(a.price > b.price){
-        return -1
-      }
-      if(a.price < b.price){
-        return 1
-      }
-      return 0
-    })
+  buy_orders: (state, commit, rootState) => {
+    return state.buy_orders
+      .filter(order => {
+        if(order.tokenGet == rootState.tokens.current_token.addr){
+          return true
+        } else {
+          return false
+        }
+      })
+      .sort((a, b) => { 
+        if(a.price > b.price){
+          return -1
+        }
+        if(a.price < b.price){
+          return 1
+        }
+        return 0
+      })
   },
-  sell_orders: (state) => {
-    return state.sell_orders.sort((a, b) => { 
-      if(a.price > b.price){
-        return 1
-      }
-      if(a.price < b.price){
-        return -1
-      }
-      return 0
-    })
+  sell_orders: (state, commit, rootState) => {
+    return state.sell_orders
+      .filter(order => {
+        if(order.tokenGive == rootState.tokens.current_token.addr){
+          return true
+        } else {
+          return false
+        }
+      })
+      .sort((a, b) => { 
+        if(a.price > b.price){
+          return 1
+        }
+        if(a.price < b.price){
+          return -1
+        }
+        return 0
+      })
   },
 }
 

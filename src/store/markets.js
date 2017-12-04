@@ -38,7 +38,7 @@ const actions = {
       user: rootState.users.address
     })
 
-    console.log("getting new market")
+    console.log("getting new market: ",  rootState.tokens.current_token.addr)
 
     return new Promise((resolve, reject) => {
       APIs.EtherDelta.socket.once('market', (market) => {
@@ -65,8 +65,6 @@ const actions = {
         dispatch("trades/watch_trades", {}, {root: true})
         dispatch("users/update_ed_wallet", {}, {root: true})
         dispatch("users/update_current_wallet", {}, {root: true})
-
-        
         
         resolve(market)
       })

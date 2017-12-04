@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      trades: 'trades/trades',
+      trades: 'trades/current_token_trades',
       buy_orders: 'orders/buy_orders',
       sell_orders: 'orders/sell_orders',
       current_wallet: 'users/current_wallet',

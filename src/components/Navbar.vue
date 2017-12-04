@@ -61,7 +61,7 @@ export default {
       tokens: 'tokens/filtered_tokens',
       current_token: 'tokens/current_token',
       token_filter: 'tokens/token_filter',
-      trades: 'trades/current_market_trades',
+      trades: 'trades/current_token_trades',
       address: 'users/address',
     }),
   },

@@ -53,7 +53,7 @@ export default {
   
   methods: {
     initChart(){
-      this.margin = {top: 5, right: 50, bottom: 5, left: -1}
+      this.margin = {top: 5, right: 50, bottom: 5, left: 0}
       this.width = this.$refs.chart_container.clientWidth - this.margin.left - this.margin.right
       this.height = this.$refs.chart_container.clientHeight - this.margin.top - this.margin.bottom
 
