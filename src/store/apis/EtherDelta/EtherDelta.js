@@ -3,10 +3,9 @@
 import config from './EtherDeltaConfig.json'
 import io from 'socket.io-client'
 import BigNumber from 'big-number'
-// import Web3 from 'web3'
 
-const ABIEtherDelta = require('./EtherDeltaABI.json');
-const ABIToken = require('./TokenABI.json');
+import ABIEtherDelta from './EtherDeltaABI.json'
+import ABIToken from './TokenABI.json'
 // const sha256 = require('js-sha256').sha256;
 // const ethUtil = require('ethereumjs-util');
 // const Tx = require('ethereumjs-tx');
