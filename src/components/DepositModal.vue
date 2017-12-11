@@ -9,14 +9,14 @@
       .eth.balance-row
         .left
           span.currency ETH
-          input(placeholder="0.00" type="number")
+          input(placeholder="0.00" step=".01" type="number" v-model="eth_amount")
         .right
           .button(@click="depositEth()")  DEPOSIT
           
-      .alt.balance-row(v-if="current_market")
+      .alt.balance-row
         .left
-          span.currency {{current_market.currency}}
-          input(placeholder="0.00" type="number")
+          span.currency {{token.name}}
+          input(placeholder="0.00" step=".01" type="number" v-model="token_amount")
         .right
           .button(@click="depositToken()")  DEPOSIT
         
@@ -24,12 +24,15 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
+import APIs from '@/store/apis'
+
 export default {
   name: 'DepositModal',
   data(){
     return {
-      
+      eth_amount: 0.00,
+      token_amount: 0.00
     }
   },
   methods: {
@@ -37,7 +40,10 @@ export default {
       close: "modal/SET_CURRENT_MODAL"
     }),
     depositEth(){
-
+      console.log("deposit eth")
+      console.log(this.eth_amount)
+      console.log(APIs.EtherDelta)
+      APIs.EtherDelta.depositEth(this.eth_amount)
     },
     depositToken(){
 
@@ -45,10 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      current_market: 'markets/current_market',
-      trades: 'trades/current_market_trades',
-      buy_orders: 'orders/current_market_buy_orders',
-      sell_orders: 'orders/current_market_sell_orders',
+      token: 'tokens/current_token',
       current_wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
     }),

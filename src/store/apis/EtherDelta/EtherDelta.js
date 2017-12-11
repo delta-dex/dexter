@@ -17,6 +17,15 @@ class EtherDelta {
     this.contractToken = this.w3.eth.contract(ABIToken)
   }
 
+  initSocket(){
+    return new Promise((resolve, reject) => {
+      this.socket = io.connect(config.socketServer[0], { transports: ['websocket'] })
+      this.socket.on('connect', () => {
+        resolve(this.socket)
+      })
+    });
+  }
+
   getEtherDeltaBalance(tokenAddress, userAddress){
     return new Promise((resolve, reject) => {
       this.contractEtherDelta.balanceOf(tokenAddress, userAddress, (err, result) => {
@@ -42,34 +51,36 @@ class EtherDelta {
     })
   }
 
-  initSocket(){
-    return new Promise((resolve, reject) => {
-      this.socket = io.connect(config.socketServer[0], { transports: ['websocket'] })
-      this.socket.on('connect', () => {
-        resolve(this.socket)
-      })
-    });
-
+  depositEth(amount){
+    let w3 = new Web3(web3.currentProvider);
+    let user_addr = w3.eth.accounts[0]
+    let contract = w3.eth.contract(ABIEtherDelta).at("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819")
+    amount = w3.toWei(amount, 'ether')    
+    return contract.deposit({value: amount}, result => {
+      log("reuslt: ", result)
+      return result
+    }).then(results => {
+      log("results: ", results)
+    }).catch(error => {
+      log("error: ", error)
+    })
   }
 
-  onConnect(){
-    this.socket.emit('getMarket', { token: '', user: '' });          
-  }
-  onMarket(market){
-    console.log("onMarket: ", market)    
-    this.marktes = market.returnTicker
-  }
-  onOrders(orders){
-    console.log("onOrders: ", orders)    
-    this.buy_orders = this.buy_orders.concat(orders.buys)
-    this.sell_orders = this.sell_orders.concat(orders.sells)
+  withdrawEth(amount){
+    let w3 = new Web3(web3.currentProvider);
+    let user_addr = w3.eth.accounts[0]
+    let contract = w3.eth.contract(ABIEtherDelta).at("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819")
+    amount = w3.toWei(amount, 'ether')    
+    return contract.withdraw(amount, result => {
+      log("reuslt: ", result)
+      return result
+    }).then(results => {
+      log("results: ", results)
+    }).catch(error => {
+      log("error: ", error)
+    })
   }
   
-  onTrades(trades){
-    console.log("onTrades: ", trades)    
-    this.trades = this.trades.concat(trades)
-  }
-
   createOrder(side, expires, price, amount, token, user){
     const zeroPad = (num, places) => {
       const zero = (places - num.toString().length) + 1;
