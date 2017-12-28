@@ -18,7 +18,7 @@ const store = new Vuex.Store({
     tokens: tokens,
     orders: orders,
     trades: trades,
-    
+
     // Components
     navbar: components.Navbar,
     modal: components.Modal,

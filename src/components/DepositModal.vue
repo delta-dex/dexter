@@ -3,13 +3,13 @@
   .header
     span DEPOSIT
     i.material-icons(@click="close(null)") close
-      
+
   .body
     .form
       .eth.balance-row
         .left
           span.currency ETH
-          input(placeholder="0.00" step=".01" type="number" v-model="eth_amount")
+          input(placeholder="0.00" type="number")
         .right
           .button(@click="depositEth()")  DEPOSIT
           
@@ -73,29 +73,29 @@ export default {
       display flex
       flex-wrap wrap
       flex-basis 100%
-      
+
       .balance-row
         display flex
         align-items center
         justify-content space-between
         margin-bottom .5em
         align-items center
-        flex-basis 100%        
+        flex-basis 100%
 
         .left
           display flex
           flex-grow 1
           flex-wrap wrap
           padding-right 2em
-          
-          span.currency 
+
+          span.currency
             font-size 14px
             font-weight 700
 
           input
             margin-top 5px
             flex-basis 100%
-            
+
         .right
           height 100%
           display flex
@@ -105,6 +105,6 @@ export default {
           .button
             height 32px
             padding 0px
-       
-      
+
+
 </style>
