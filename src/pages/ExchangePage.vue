@@ -3,18 +3,18 @@
   .left-container
     balance(:token="token" :current_wallet="current_wallet" :ed_wallet="ed_wallet")
     order-form(:token="token")
-    
+
   .orders-container
     order-book(:buys="buy_orders", :sells="sell_orders")
     order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
 
-  .chart-container  
+  .chart-container
     depth-chart(:buys="buy_orders", :sells="sell_orders")
-  
+
   .trade-history-container
     trade-history(:trades="trades")
 
-  
+
 </template>
 
 <script>
@@ -94,7 +94,7 @@ export default {
         this.updateTokenFilter(param_token.name)
       }
     }
-    
+
     APIs.EtherDelta.initSocket().then(socket => {
       this.initMarket()
     })
@@ -113,29 +113,29 @@ export default {
   display flex
   flex-basis 100%
   height 100%
-  
+
   .left-container
     flex-basis 15%
-    
+
   .order-form-container
     flex-basis 15%
-  
+
   .orders-container
     flex-basis 35%
     flex-wrap wrap
 
     .order-book
       height 70% !important
-    
+
     .order-history
       height 30% !important
-    
+
   .chart-container
     flex-basis 25%
-  
+
   .trade-history-container
     margin-left auto
     flex-basis 25%
-  
-  
+
+
 </style>

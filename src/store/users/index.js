@@ -4,9 +4,9 @@ const ETH_ADDRESS = '0x0000000000000000000000000000000000000000'
 // State
 const state = {
   lang: "en-US",
-  address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+  address: APIs.EtherDelta.w3.eth.defaultAccount,
   current_wallet: {
-    address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+    address: APIs.EtherDelta.w3.eth.defaultAccount,
     balance: "",
     tokens: [
       {
@@ -18,7 +18,7 @@ const state = {
     ]
   },
   ed_wallet: {
-    address: "0x7859df45f9446796d88c909b610e071ddcf82e9b",
+    address: APIs.EtherDelta.w3.eth.defaultAccount,
     balance: "0.0",
     tokens: [
       {
@@ -27,7 +27,7 @@ const state = {
         name: "Raiden Network",
         symbol: "RDN"
       }
-    ]    
+    ]
   },
   trades: [],
   buy_orders: [],
@@ -58,7 +58,7 @@ var getters = {
   filled_buys: (state) => {
     return state.trades.filter(t => {
       if(t.side == 'buy'){
-        return true 
+        return true
       } else {
         return false
       }
@@ -67,7 +67,7 @@ var getters = {
   filled_sells: (state) => {
     return state.trades.filter(t => {
       if(t.side == 'sell'){
-        return true 
+        return true
       } else {
         return false
       }
@@ -87,10 +87,10 @@ var mutations = {
   },
   ["UPDATE_ED_WALLET"] (state, wallet) {
     state.ed_wallet = wallet
-  },  
+  },
   ["ADD_WALLET"] (state, account) {
     state.accounts.push(account)
-  },  
+  },
   ["UPDATE_WALLETS"] (state, wallets) {
     state.wallets = wallets
   },
@@ -103,7 +103,7 @@ var mutations = {
   ["UPDATE_SELL_ORDERS"] (state, orders) {
     state.sell_orders = orders
   },
-  
+
 }
 
 // Actions
@@ -114,7 +114,7 @@ var actions = {
   },
   update_current_wallet: ({ commit, state }) => {
     let wallet = Object.assign({}, state.current_wallet)
-    
+
     // Get ETH Balance
     APIs.EtherDelta.getBalance(ETH_ADDRESS, state.current_wallet.address).then(results => {
       wallet.balance = results
@@ -141,10 +141,10 @@ var actions = {
         token.balance = results
       })
     })
-    
+
     commit("UPDATE_ED_WALLET", wallet)
   },
-  
+
 }
 
 export default {

@@ -52,10 +52,11 @@ class EtherDelta {
   }
 
   depositEth(amount){
+    console.log(amount)
     let w3 = new Web3(web3.currentProvider);
-    let user_addr = w3.eth.accounts[0]
     let contract = w3.eth.contract(ABIEtherDelta).at("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819")
-    amount = w3.toWei(amount, 'ether')    
+    amount = w3.toWei(amount, 'ether')
+
     return contract.deposit({value: amount}, result => {
       log("reuslt: ", result)
       return result
@@ -68,9 +69,8 @@ class EtherDelta {
 
   withdrawEth(amount){
     let w3 = new Web3(web3.currentProvider);
-    let user_addr = w3.eth.accounts[0]
     let contract = w3.eth.contract(ABIEtherDelta).at("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819")
-    amount = w3.toWei(amount, 'ether')    
+    amount = w3.toWei(amount, 'ether')
     return contract.withdraw(amount, result => {
       log("reuslt: ", result)
       return result
@@ -80,7 +80,14 @@ class EtherDelta {
       log("error: ", error)
     })
   }
-  
+
+  // place_order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce) {
+  //   if (msg.value>0) throw;
+  //   bytes32 hash = sha256(this, tokenGet, amountGet, tokenGive, amountGive, expires, nonce);
+  //   orders[msg.sender][hash] = true;
+  //   Order(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, msg.sender);
+  // }
+
   createOrder(side, expires, price, amount, token, user){
     const zeroPad = (num, places) => {
       const zero = (places - num.toString().length) + 1;
