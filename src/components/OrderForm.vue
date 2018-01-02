@@ -103,6 +103,11 @@ export default {
     },
     submitTrade(){
       if(this.validOrder){
+        let amount = this.orderForm.volume
+        if(this.orderForm.order_type == "buy"){
+          amount = this.orderForm.volume * this.orderForm.price
+        }
+
         let data = {
           tokenGet: this.orderForm.trade_order.tokenGet,
           amountGet: this.orderForm.trade_order.amountGet,
@@ -114,7 +119,7 @@ export default {
           v: this.orderForm.trade_order.v,
           r: this.orderForm.trade_order.r,
           s: this.orderForm.trade_order.s,
-          amount: this.orderForm.volume
+          amount: amount
         }
 
         this.trade(data)

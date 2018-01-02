@@ -1,6 +1,6 @@
 // State
 const state = {
-  current_modal: null
+  current_modal: null,
 }
 
 // Getters
@@ -17,7 +17,7 @@ var mutations = {
 
 // Actions
 var actions = {
-  
+
 }
 
 export default {
