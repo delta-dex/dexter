@@ -1,7 +1,9 @@
 <template lang="pug">
 .order-form.component
   .header
-    span PLACE ORDER
+    span(@click="updateOrderForm({trade_order: null})" :class="{'active': !orderForm.trade_order}") PLACE ORDER
+    span(@click="alertUser()" :class="{'active': orderForm.trade_order}") TRADE
+
   .body
     .buy-or-sell
       div.button.buy(@click="orderForm.order_type = 'buy'" :class="{'active': orderForm.order_type == 'buy'}")
@@ -18,32 +20,34 @@
     .amount-container
       span.label Amount
       .input-container
-        input(placeholder="0.00" type="number", v-model="orderForm.volume")
+        input(placeholder="0.00" type="number" v-model="orderForm.volume")
         span.info {{token.name}}
 
 
     .total-container
       span.info TOTAL
-      span.eth (ETH) 
+      span.eth (ETH)
       span.total {{total}}
-      
+
     .expires-container
       span.label Expires
       .input-container
-        input(placeholder="0" type="number" v-model="orderForm.expires")
+        input(placeholder="number of blocks" type="number" v-model="orderForm.expires")
 
     .place-order-container
-      div.button.place-order(@click="placeOrder()" :class="{'sell': orderForm.order_type == 'sell'}")
+      div.button.place-order(@click="submitOrder()" :class="{'sell': orderForm.order_type == 'sell', 'disabled': !validOrder}" v-if="!orderForm.trade_order")
         span PLACE {{orderForm.order_type.toUpperCase()}} ORDER
+      div.button.trade(@click="submitTrade()" :class="{'sell': orderForm.order_type == 'sell', 'disabled': !validOrder}" v-else)
+        span PLACE {{orderForm.order_type.toUpperCase()}} TRADE
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'OrderForm',
   data(){
     return {
-      
+
     }
   },
   props: {
@@ -53,19 +57,89 @@ export default {
   },
   methods: {
     ...mapMutations({
-      openModal: "modal/SET_CURRENT_MODAL"
+      openModal: "modal/SET_CURRENT_MODAL",
+      updateOrderForm: 'orders/UPDATE_ORDER_FORM',
     }),
-    setOrderType(type){
-      this.orderType = type
+    ...mapActions({
+      placeOrder: "orders/place_order",
+      trade: "orders/trade"
+    }),
+    alertUser(){
+      if(!this.orderForm.trade_order){
+        alert("Select an order from the Order Book to trade with")
+      }
     },
-    placeOrder(){
-      this.openModal("OrderModal")
+    submitOrder(){
+      if(this.validOrder){
+        // Assume Eth
+        let tokenGive = '0x0000000000000000000000000000000000000000'
+        let tokenGet = '0x0000000000000000000000000000000000000000'
+
+        if(this.orderForm.order_type == "buy"){
+          tokenGet = this.token.addr
+        } else {
+          tokenGive = this.token.addr
+        }
+
+        let amountGet = this.orderForm.volume
+        let amountGive = this.orderForm.volume
+
+        if(this.orderForm.order_type == "buy"){
+          amountGive = this.orderForm.volume * this.orderForm.price
+        } else {
+          amountGet = this.orderForm.volume * this.orderForm.price
+        }
+
+        let data = {
+          tokenGet,
+          amountGet,
+          tokenGive,
+          amountGive,
+          expires: this.orderForm.expires,
+          nonce: 0
+        }
+        this.placeOrder(data)
+      }
+    },
+    submitTrade(){
+      if(this.validOrder){
+        let data = {
+          tokenGet: this.orderForm.trade_order.tokenGet,
+          amountGet: this.orderForm.trade_order.amountGet,
+          tokenGive: this.orderForm.trade_order.tokenGive,
+          amountGive: this.orderForm.trade_order.amountGive,
+          expires: this.orderForm.trade_order.expires,
+          nonce: this.orderForm.trade_order.nonce,
+          user: this.orderForm.trade_order.user,
+          v: this.orderForm.trade_order.v,
+          r: this.orderForm.trade_order.r,
+          s: this.orderForm.trade_order.s,
+          amount: this.orderForm.volume
+        }
+
+        this.trade(data)
+      }
     }
   },
   computed: {
     ...mapGetters({
       orderForm: "orders/order_form"
     }),
+    validOrder(){
+      if(parseFloat(this.orderForm.price) <= 0){
+        return false
+      }
+      if(parseFloat(this.orderForm.volume) <= 0){
+        return false
+      }
+      if(parseInt(this.orderForm.expires) <= 0){
+        return false
+      }
+      if(this.orderForm.order_type != "buy" && this.orderForm.order_type != "sell"){
+        return false
+      }
+      return true
+    },
     total(){
       let total = this.orderForm.price * this.orderForm.volume
       return total.toFixed(5)
@@ -85,19 +159,33 @@ export default {
 .order-form
   display flex
   flex-wrap wrap
-  
+
+  .header
+    display flex
+    align-items center
+    justify-content space-around
+    span
+      cursor pointer
+      margin-right 10px
+      color rgba(255, 255, 255, .5) !important
+      transition all .2s
+
+      &.active
+        color #fff !important
+        border-bottom 1px solid white
+
   .body
     display flex
     flex-wrap wrap
     padding 1em
-    
+
     .buy-or-sell
       display flex
       align-items center
       justify-content center
       flex-basis 100%
       margin-bottom 1em
-      
+
       .button
         font-size 12px
         border none
@@ -106,7 +194,7 @@ export default {
         padding-top 1em
         padding-bottom 1em
         transition all .2s
-        
+
         span
           color white
 
@@ -148,23 +236,23 @@ export default {
       flex-basis 100%
       align-items center
       margin-bottom 1em
-      
+
       span
         font-weight bold
         font-size 12px
-        
+
         &.eth
           font-size 10px
           font-weight 500
           margin-left 5px
         &.total
           margin-left auto
-      
+
     .place-order-container
       flex-basis 100%
       display flex
       border none
-      
+
       .button
         flex-basis 100%
         border none
@@ -175,18 +263,24 @@ export default {
         background $color-green-dark
         font-size 13px
         transition all .2s
-        
+
         span
           color white
-          
+
         &:hover
           background lighten($color-green-dark, 15%)
+
+        &.disabled
+          background lighten($color-green-dark, 25%)
+          cursor not-allowed
 
         &.sell
           background $color-red
           &:hover
             background lighten($color-red, 15%)
 
+          &.disabled
+            background lighten($color-red, 25%)
+            cursor not-allowed
 
-      
 </style>

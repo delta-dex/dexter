@@ -67,6 +67,7 @@ export default {
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
     }),
     initMarket(){
+      log("INIT MARKET")
       this.updateCurrentMarket().then(market => {
         this.openModal(null)
       }, error => {
@@ -101,6 +102,14 @@ export default {
 
     this.updateCurrentWallet()
     this.updateEdWallet()
+
+    // Update both wallets every second
+    setInterval(()=> {
+      this.updateCurrentWallet()
+      this.updateEdWallet()
+    }, 5000)
+
+    window.ed = APIs.EtherDelta
   },
   mounted(){
 

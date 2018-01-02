@@ -44,7 +44,7 @@ const getters = {
     })
     }
   },
-  
+
 }
 
 // Mutations
@@ -57,8 +57,8 @@ const mutations = {
   },
   ["UPDATE_TOKEN_FILTER"] (state, filter) {
     state.token_filter = filter
-  },  
-  
+  },
+
 }
 
 

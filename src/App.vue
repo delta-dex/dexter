@@ -23,7 +23,7 @@ export default {
   },
   name: 'app',
   created(){
-    console.log("Welcome to the Dexter Exchange")
+    console.log("%cWelcome to the Dexter Exchange", 'background: #222; color: #bada55; font-size: 22px')
   },
 }
 </script>

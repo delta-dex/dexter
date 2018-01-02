@@ -7,44 +7,19 @@ const state = {
   address: APIs.EtherDelta.w3.eth.defaultAccount,
   current_wallet: {
     address: APIs.EtherDelta.w3.eth.defaultAccount,
-    balance: "",
-    tokens: [
-      {
-        address: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
-        balance: "0",
-        name: "Raiden Network",
-        symbol: "RDN"
-      }
-    ]
+    eth_balance: 0.0,
+    current_token_balance: 0.0,
   },
   ed_wallet: {
     address: APIs.EtherDelta.w3.eth.defaultAccount,
-    balance: "0.0",
-    tokens: [
-      {
-        address: "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6",
-        balance: "0.0",
-        name: "Raiden Network",
-        symbol: "RDN"
-      }
-    ]
+    eth_balance: 0.0,
+    current_token_balance: 0.0
   },
   trades: [],
   buy_orders: [],
   sell_orders: [],
   tokens: [],
-  wallets: [
-    // {
-    //   address: "",
-    //   balance: "",
-    //   tokens: [
-    //     {
-    //       address: "",
-    //       balance: ""
-    //     }
-    //   ]
-    // }
-  ]
+  wallets: []
 }
 
 // Getters
@@ -112,37 +87,39 @@ var actions = {
     let user = JSON.stringify(state)
     localStorage.setItem("user", user)
   },
-  update_current_wallet: ({ commit, state }) => {
-    let wallet = Object.assign({}, state.current_wallet)
+  update_current_wallet: ({ commit, state, rootState }) => {
+    if(state.current_wallet.address && rootState.tokens.current_token.addr){
+      let wallet = Object.assign({}, state.current_wallet)
 
-    // Get ETH Balance
-    APIs.EtherDelta.getBalance(ETH_ADDRESS, state.current_wallet.address).then(results => {
-      wallet.balance = results
-    })
-
-    wallet.tokens.forEach(token => {
-      APIs.EtherDelta.getBalance(token.address, state.current_wallet.address).then(results => {
-        token.balance = results
+      // Get ETH Balance
+      APIs.EtherDelta.getBalance(ETH_ADDRESS, state.current_wallet.address).then(results => {
+        wallet.eth_balance = results
       })
-    })
 
-    commit("UPDATE_CURRENT_WALLET", wallet)
+      // Get Current Token Balnace
+      APIs.EtherDelta.getBalance(rootState.tokens.current_token.addr, state.current_wallet.address).then(results => {
+        wallet.current_token_balance = results
+      })
+
+      commit("UPDATE_CURRENT_WALLET", wallet)
+    }
   },
-  update_ed_wallet: ({ commit, state }) => {
-    let wallet = Object.assign({}, state.ed_wallet)
+  update_ed_wallet: ({ commit, state, rootState }) => {
+    if(state.ed_wallet.address && rootState.tokens.current_token.addr){
+      let wallet = Object.assign({}, state.ed_wallet)
 
-    // Get ETH Balance
-    APIs.EtherDelta.getEtherDeltaBalance(ETH_ADDRESS, wallet.address).then(results => {
-      wallet.balance = results
-    })
-
-    wallet.tokens.forEach(token => {
-      APIs.EtherDelta.getEtherDeltaBalance(token.address, wallet.address).then(results => {
-        token.balance = results
+      // Get ETH Balance in EtherDelta
+      APIs.EtherDelta.getEtherDeltaBalance(ETH_ADDRESS, wallet.address).then(results => {
+        wallet.eth_balance = results
       })
-    })
 
-    commit("UPDATE_ED_WALLET", wallet)
+      // Get Current Token Balance in EtherDelta
+      APIs.EtherDelta.getEtherDeltaBalance(rootState.tokens.current_token.addr, wallet.address).then(results => {
+        wallet.current_token_balance = results
+      })
+
+      commit("UPDATE_ED_WALLET", wallet)
+    }
   },
 
 }

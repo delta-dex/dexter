@@ -3,7 +3,7 @@
   .header
     span(@click="openOrders = true" :class="{'active': openOrders}") OPEN ORDERS
     span(@click="openOrders = false" :class="{'active': !openOrders}") FILLED ORDERS
-    
+
   .body
     .order-list-header
       span.Type Type
@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      
+
     }),
     orders(){
       if(!this.openOrders){
@@ -77,7 +77,7 @@ export default {
           }
           if(a.date > b.date){
             return -1
-          } 
+          }
           return 0
         })
       } else {
@@ -87,7 +87,7 @@ export default {
           }
           if(a.date > b.date){
             return -1
-          } 
+          }
           return 0
         })
       }
@@ -96,7 +96,7 @@ export default {
   },
 
   mounted(){
-    
+
   }
 }
 </script>
@@ -119,12 +119,12 @@ export default {
       cursor pointer
       margin-right 10px
       color rgba(255, 255, 255, .5) !important
-      transition all .1s
-      
+      transition all .2s
+
       &.active
         color #fff !important
         border-bottom 1px solid white
-  
+
   .body
     display flex
     flex-wrap wrap
@@ -139,7 +139,7 @@ export default {
       background $color-component-background
       box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
       justify-content space-around
-      
+
       span
         text-align right
         font-size 13px
@@ -167,14 +167,14 @@ export default {
         display flex
         flex-basis 100%
         cursor pointer
-        
+
         .order
           display flex
           flex-basis 100%
           align-items center
           justify-content space-around
 
-          
+
           span
             font-size 11px
             font-weight 700
@@ -193,7 +193,7 @@ export default {
             text-transform uppercase
             height 100%
 
-            
+
           .volume-container
 
             height 100%
@@ -201,10 +201,10 @@ export default {
             line-height 1
             justify-content center
             padding 2px 0px
-            
+
           .time-container
             line-height 1
-            
+
           &:hover
             background lighten($color-component-background, 15%)
 
@@ -214,5 +214,5 @@ export default {
           &.buy
             span.type
               color $color-green
-          
+
 </style>

@@ -25,7 +25,7 @@ const mutations = {
 // Actions
 const actions = {
   watch_current_market: ({commit, state}, market) => {
-    
+
   },
   update_current_market: ({dispatch, commit, state, rootState}) => {
     // Remove Listeners
@@ -43,35 +43,41 @@ const actions = {
     return new Promise((resolve, reject) => {
       APIs.EtherDelta.socket.once('market', (market) => {
         log(market)
+        // Because EtherDelta cant program
+        if(!market.trades || !market.orders){// } || !market.myTrades || !market.myOrders){
+          log("ED SUCKS!!")
+          reject(market)
+        } else {
 
-        // Update Trades
-        commit("trades/UPDATE_TRADES", market.trades, {root: true})
+          // Update Trades
+          commit("trades/UPDATE_TRADES", market.trades, {root: true})
 
-        // Update Orders
-        commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
-        commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
+          // Update Orders
+          commit("orders/UPDATE_BUY_ORDERS", market.orders.buys, {root: true})
+          commit("orders/UPDATE_SELL_ORDERS", market.orders.sells, {root: true})
 
-        // Update Users
-        let user_trades = market.myTrades ? market.myTrades : []
-        commit("users/UPDATE_TRADES", user_trades, {root: true})
+          // Update Users
+          let user_trades = market.myTrades ? market.myTrades : []
+          commit("users/UPDATE_TRADES", user_trades, {root: true})
 
-        let user_buy_orders = market.myOrders ? market.myOrders.buys : []
-        let user_sell_orders = market.myOrders ? market.myOrders.sells : []
-        commit("users/UPDATE_BUY_ORDERS", user_buy_orders, {root: true})
-        commit("users/UPDATE_SELL_ORDERS", user_sell_orders, {root: true})
+          let user_buy_orders = market.myOrders ? market.myOrders.buys : []
+          let user_sell_orders = market.myOrders ? market.myOrders.sells : []
+          commit("users/UPDATE_BUY_ORDERS", user_buy_orders, {root: true})
+          commit("users/UPDATE_SELL_ORDERS", user_sell_orders, {root: true})
 
-        // Watch stuff
-        dispatch("orders/watch_orders", {}, {root: true})
-        dispatch("trades/watch_trades", {}, {root: true})
-        dispatch("users/update_ed_wallet", {}, {root: true})
-        dispatch("users/update_current_wallet", {}, {root: true})
-        
-        resolve(market)
+          // Watch stuff
+          dispatch("orders/watch_orders", {}, {root: true})
+          dispatch("trades/watch_trades", {}, {root: true})
+          dispatch("users/update_ed_wallet", {}, {root: true})
+          dispatch("users/update_current_wallet", {}, {root: true})
+
+          resolve(market)
+        }
       })
-      
-      APIs.EtherDelta.socket.on('market', (market) => {
-        log("watch market update: ", market)
-      })
+
+      // APIs.EtherDelta.socket.on('market', (market) => {
+      //   log("watch market update: ", market)
+      // })
     })
   },
 

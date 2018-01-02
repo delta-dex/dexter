@@ -10,7 +10,7 @@
       // .option-container
       //   span Aggregate
       //   input(v-model="agg" type="number" step=".01" min="0")
-        
+
   .body
     .order-list-header
       span.volume Volume
@@ -20,7 +20,7 @@
       .order-container(v-for='order in agg_sells')
         .order.sell(@click="onOrderSelected(order, 'buy')")
           .info.volume-container(:style="volumePercentStyle(order, 'sell')")
-            span.volume {{parseFloat(order.amount).toFixed(3)}}
+            span.volume {{parseFloat(order.ethAvailableVolume).toFixed(3)}}
           .info.price-container
             span.price {{priceFormat(order.price)}}
           .info.time-container
@@ -28,16 +28,16 @@
       .order-container(v-for='order in agg_buys')
         .order.buy(@click="onOrderSelected(order, 'sell')")
           .info.volume-container(:style="volumePercentStyle(order, 'buy')")
-            span.volume {{parseFloat(order.amount).toFixed(3)}}
+            span.volume {{parseFloat(order.ethAvailableVolume).toFixed(3)}}
           .info.price-container
             span.price {{priceFormat(order.price)}}
           .info.time-container
             span.time {{timeFormat(order.updated)}}
-            
+
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'OrderBook',
   data(){
@@ -47,7 +47,7 @@ export default {
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
-        hour12: false,        
+        hour12: false,
       }),
       agg: .01,
       limit: 20
@@ -61,7 +61,7 @@ export default {
     sells: {
       type: Array,
       default: () => []
-    },    
+    },
   },
   methods: {
     ...mapMutations({
@@ -75,11 +75,12 @@ export default {
       return this.dateFormatter.format(d)
     },
     onOrderSelected(order, type){
-      log(order)
       let data = {
         order_type: type,
         price: order.price,
         volume: order.amount,
+        expires: order.expires,
+        trade_order: order
       }
       this.updateOrderForm(data)
     },
@@ -102,11 +103,11 @@ export default {
       let style = "background: linear-gradient(to right," + color + percent + "%, rgba(0, 0, 0, 0)" + percent + "%)"
       return style
     }
-    
+
   },
   computed: {
     ...mapGetters({
-      
+
     }),
     agg_buys(){
       return this.buys
@@ -115,7 +116,7 @@ export default {
     agg_sells(){
       return this.sells
         .slice(0, this.limit)
-        .sort((a, b) => { 
+        .sort((a, b) => {
           if(a.price > b.price){
             return -1
           }
@@ -142,7 +143,7 @@ export default {
   },
 
   mounted(){
-    
+
   }
 }
 </script>
@@ -179,7 +180,7 @@ export default {
           width 40px
           height 20px
           color $color-text
-  
+
   .body
     display flex
     flex-wrap wrap
@@ -217,14 +218,14 @@ export default {
         display flex
         flex-basis 100%
         cursor pointer
-        
+
         .order
           display flex
           flex-basis 100%
           align-items center
           justify-content space-around
 
-          
+
           span
             font-size 11px
             font-weight 700
@@ -236,7 +237,7 @@ export default {
             line-height 1
             align-items center
             justify-content center
-            
+
           .volume-container
             justify-content flex-end
             flex-basis 40%
@@ -246,19 +247,19 @@ export default {
             flex-basis 35%
             justify-content center
             padding 2px 0px
-            
+
           .time-container
             line-height 1
             flex-basis 25%
-            
+
           &.sell
             span.price
               color $color-red
           &.buy
             span.price
               color $color-green
-              
+
           &:hover
             background lighten($color-component-background, 15%)
-          
+
 </style>

@@ -10,19 +10,19 @@
       .type-ahead(v-if="tokenSelectActive")
         .token(v-for="token in tokens" @mousedown="onTokenSelect(token)")
           span {{token.name}}
-    .break          
+    .break
     .price-container(v-if="trades && trades.length")
       span.price {{trades[0].price}}
   .center
   .right
     .current-address
       span.address {{address}}
-    router-link(:to="{name: 'portfolio', params: {address: address}}")  
-      i.material-icons pie_chart
+    //- router-link(:to="{name: 'portfolio', params: {address: address}}")
+    //-   i.material-icons pie_chart
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'  
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import APIs from '../store/apis'
 
 export default {
@@ -40,7 +40,7 @@ export default {
       openModal: "modal/SET_CURRENT_MODAL",
     }),
     ...mapActions({
-      updateCurrentMarket: "markets/update_current_market",      
+      updateCurrentMarket: "markets/update_current_market",
     }),
     onFilterChange(e){
       this.updateTokenFilter(e.target.value)
@@ -65,7 +65,7 @@ export default {
       address: 'users/address',
     }),
   },
-  
+
 
   mounted(){
 
@@ -90,7 +90,7 @@ export default {
     margin-left 1em
     display flex
     align-items center
-    
+
     .brand
       font-family 'Cinzel', serif !important
       font-size 36px
@@ -104,14 +104,14 @@ export default {
       height 35px
       background rgba(44,53,57, .8)
       margin-right 20px
-      
-      
+
+
     .token-select
       position relative
       img
         position absolute
         left -20px
-      
+
       input
         font-size 22px
         width 100px
@@ -130,7 +130,7 @@ export default {
         position absolute
         top 5px
         right 20px
-        
+
       .type-ahead
         background white
         position absolute
@@ -149,10 +149,10 @@ export default {
           cursor pointer
           flex-basis 100%
           padding 3px 0px
-          
+
           &:hover
             background rgba(0,0,0, .1)
-            
+
           span
             margin-left 10px
             font-size 20px
@@ -162,20 +162,20 @@ export default {
       .price
         color $color-text-invert
         font-weight 400
-        
+
   .center
     flex-grow 1
 
   .right
-    flex-basis 25%    
+    flex-basis 25%
     margin-left auto
     margin-right 1em
     display flex
     align-items center
-    
+
     .current-address
       margin-right 1em
-      
+
       span
         color $color-text-invert
         font-weight 400

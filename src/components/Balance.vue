@@ -6,7 +6,7 @@
     .balance-container
       .eth.balance-row
         span.currency ETH
-        span.amount {{edEthBalance.toFixed(10)}} 
+        span.amount {{edEthBalance.toFixed(10)}}
       .alt.balance-row
         span.currency {{token.name}}
         span.amount {{edTokenBalance.toFixed(10)}}
@@ -18,16 +18,16 @@
         i.material-icons eject
         span WITHDRAW
 
-      
+
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'Balance',
   data(){
     return {
-      
+
     }
   },
   props: {
@@ -51,16 +51,10 @@ export default {
 
     ]),
     edEthBalance(){
-      return parseFloat(this.ed_wallet.balance)
+      return parseFloat(this.ed_wallet.eth_balance)
     },
     edTokenBalance(){
-      let balance = parseFloat("0.0")
-      this.ed_wallet.tokens.forEach(token => {
-        if(token.address === this.token.addr){
-          balance = parseFloat(token.balance)
-        }
-      })
-      return balance
+      return parseFloat(this.ed_wallet.current_token_balance)
     }
   },
   mounted(){
@@ -76,11 +70,11 @@ export default {
 .balance
   display flex
   flex-wrap wrap
-  
+
   .body
     display flex
     flex-wrap wrap
-    
+
     .balance-container
       padding .5em 1em
       flex-basis 100%
@@ -91,13 +85,13 @@ export default {
           font-size 13px
           color white
           font-weight 700
-            
+
       .balance-row
         display flex
         align-items center
         justify-content space-between
         margin-bottom .5em
-        
+
         span.currency
           font-size 13px
           font-weight 400
@@ -117,6 +111,6 @@ export default {
         i
           transform rotate(180deg)
           padding-left 5px
-        
-      
+
+
 </style>

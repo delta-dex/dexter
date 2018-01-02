@@ -11,7 +11,8 @@ const state = {
     order_type: "buy",
     price: 0.00,
     volume: 0.00,
-    expires: null,
+    expires: 10000,
+    trade_order: null
   },
 }
 
@@ -31,7 +32,7 @@ const getters = {
           return false
         }
       })
-      .sort((a, b) => { 
+      .sort((a, b) => {
         if(a.price > b.price){
           return -1
         }
@@ -50,7 +51,7 @@ const getters = {
           return false
         }
       })
-      .sort((a, b) => { 
+      .sort((a, b) => {
         if(a.price > b.price){
           return 1
         }
@@ -85,7 +86,7 @@ const mutations = {
     state.sell_orders = formatOrders(orders).concat(state.sell_orders)
   },
   ["UPDATE_ORDER_FORM"] (state, form) {
-    state.order_form = form
+    state.order_form = Object.assign({}, state.order_form, form)
   },
 }
 
@@ -97,8 +98,19 @@ const actions = {
       commit("ADD_SELL_ORDERS", orders.sells)
     })
   },
-  create_order: ({commit, state}, {side, expires, price, amount, token, user}) => {
-    APIs.EtherDelta.createOrder(side, expires, price, amount, token, user)
+  place_order: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce}) => {
+    APIs.EtherDelta.placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce).then(result => {
+      log("result ", result)
+    }).catch(error => {
+      log("error ", error)
+    })
+  },
+  trade: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount}) => {
+    APIs.EtherDelta.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount).then(result => {
+      log("result ", result)
+    }).catch(error => {
+      log("error ", error)
+    })
   },
 }
 

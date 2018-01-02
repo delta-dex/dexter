@@ -9,18 +9,20 @@
       .eth.balance-row
         .left
           span.currency ETH
-          input(placeholder="0.00" type="number")
+          span.balance {{wallet.eth_balance}}
+          input(placeholder="0.00" step="0.01" type="number" v-model="eth_amount")
         .right
           .button(@click="depositEth()")  DEPOSIT
-          
+
       .alt.balance-row
         .left
           span.currency {{token.name}}
-          input(placeholder="0.00" step=".01" type="number" v-model="token_amount")
+          span.balance {{wallet.current_token_balance}}
+          input(placeholder="0.00" step="0.01" type="number" v-model="token_amount")
         .right
           .button(@click="depositToken()")  DEPOSIT
-        
-      
+
+
 </template>
 
 <script>
@@ -40,19 +42,29 @@ export default {
       close: "modal/SET_CURRENT_MODAL"
     }),
     depositEth(){
-      console.log("deposit eth")
-      console.log(this.eth_amount)
-      console.log(APIs.EtherDelta)
-      APIs.EtherDelta.depositEth(this.eth_amount)
+      APIs.EtherDelta.depositEth(this.eth_amount).then(result => {
+        log("result: ", result)
+      }).catch(error => {
+        log("error: ", error)
+      })
     },
     depositToken(){
-
+      APIs.EtherDelta.approve(this.token.addr, this.token_amount).then(result => {
+        log("approve result: ", result)
+        APIs.EtherDelta.depositToken(this.token.addr, this.token_amount).then(result => {
+          log("depositToken result: ", result)
+        }).catch(error => {
+          log("error: ", error)
+        })
+      }).catch(error => {
+        log("error: ", error)
+      })
     }
   },
   computed: {
     ...mapGetters({
       token: 'tokens/current_token',
-      current_wallet: 'users/current_wallet',
+      wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
     }),
   },
@@ -78,7 +90,7 @@ export default {
         display flex
         align-items center
         justify-content space-between
-        margin-bottom .5em
+        margin-bottom 1em
         align-items center
         flex-basis 100%
 
@@ -92,8 +104,13 @@ export default {
             font-size 14px
             font-weight 700
 
+          span.balance
+            font-size 14px
+            font-weight 700
+            margin-left auto
+
           input
-            margin-top 5px
+            margin-top 8px
             flex-basis 100%
 
         .right
