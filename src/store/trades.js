@@ -4,12 +4,14 @@ import APIs from './apis'
 // State
 const state = {
   trades: [],
-  current_token_trades: []
+  current_token_trades: [],
+  trade_order: {}
 }
 
 // Getters
 const getters = {
   trades: (state) => state.trades,
+  trade_order: (state) => state.trade_order,
   current_token_trades: (state, commit, rootState) => {
     return state.trades.filter(trade => {
       if(trade.tokenAddr == rootState.tokens.current_token.addr){
@@ -17,7 +19,7 @@ const getters = {
       } else {
         return false
       }
-    })      
+    })
   },
 }
 
@@ -29,7 +31,9 @@ const mutations = {
   ["UPDATE_TRADES"] (state, trades) {
     state.trades = trades
   },
-  
+  ["UPDATE_TRADE_ORDER"] (state, order) {
+    state.trade_order = order
+  },
 }
 
 // Actions
@@ -38,7 +42,14 @@ const actions = {
     APIs.EtherDelta.socket.on('trades', (trades) => {
       commit("ADD_TRADES", trades)
     })
-  }  
+  },
+  trade: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount}) => {
+    APIs.EtherDelta.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount).then(result => {
+      log("result ", result)
+    }).catch(error => {
+      log("error ", error)
+    })
+  },
 }
 
 

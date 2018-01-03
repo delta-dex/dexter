@@ -18,7 +18,7 @@
       span.time Time
     .order-list
       .order-container(v-for='order in agg_sells')
-        .order.sell(@click="onOrderSelected(order, 'buy')")
+        .order.sell(@click="onOrderSelected(order)")
           .info.volume-container(:style="volumePercentStyle(order, 'sell')")
             span.volume {{parseFloat(order.ethAvailableVolume).toFixed(3)}}
           .info.price-container
@@ -26,7 +26,7 @@
           .info.time-container
             span.time {{timeFormat(order.updated)}}
       .order-container(v-for='order in agg_buys')
-        .order.buy(@click="onOrderSelected(order, 'sell')")
+        .order.buy(@click="onOrderSelected(order)")
           .info.volume-container(:style="volumePercentStyle(order, 'buy')")
             span.volume {{parseFloat(order.ethAvailableVolume).toFixed(3)}}
           .info.price-container
@@ -65,7 +65,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      updateOrderForm: 'orders/UPDATE_ORDER_FORM'
+      updateTradeOrder: 'trades/UPDATE_TRADE_ORDER',
+      updateModal: "modal/SET_CURRENT_MODAL"
     }),
     priceFormat(price){
       return parseFloat(price).toFixed(10)
@@ -74,15 +75,9 @@ export default {
       let d = new Date(dateString)
       return this.dateFormatter.format(d)
     },
-    onOrderSelected(order, type){
-      let data = {
-        order_type: type,
-        price: order.price,
-        volume: order.amount,
-        expires: order.expires,
-        trade_order: order
-      }
-      this.updateOrderForm(data)
+    onOrderSelected(order){
+      this.updateTradeOrder(order)
+      this.updateModal("TradeConfirmModal")
     },
     aggregate(orders){
       // let agg_orders = []

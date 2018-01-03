@@ -70,7 +70,7 @@ export default {
 
 
 <style lang="stylus">
-@import "../styles/main.styl"
+
 .withdraw
   flex-basis 30% !important
   .body

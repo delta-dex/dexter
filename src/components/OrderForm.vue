@@ -1,8 +1,7 @@
 <template lang="pug">
 .order-form.component
   .header
-    span(@click="updateOrderForm({trade_order: null})" :class="{'active': !orderForm.trade_order}") PLACE ORDER
-    span(@click="alertUser()" :class="{'active': orderForm.trade_order}") TRADE
+    span(:class="{'active': !orderForm.trade_order}") PLACE ORDER
 
   .body
     .buy-or-sell
@@ -62,8 +61,7 @@ export default {
     }),
     ...mapActions({
       placeOrder: "orders/place_order",
-      trade: "orders/trade"
-    }),
+     }),
     alertUser(){
       if(!this.orderForm.trade_order){
         alert("Select an order from the Order Book to trade with")
@@ -101,30 +99,6 @@ export default {
         this.placeOrder(data)
       }
     },
-    submitTrade(){
-      if(this.validOrder){
-        let amount = this.orderForm.volume
-        if(this.orderForm.order_type == "buy"){
-          amount = this.orderForm.volume * this.orderForm.price
-        }
-
-        let data = {
-          tokenGet: this.orderForm.trade_order.tokenGet,
-          amountGet: this.orderForm.trade_order.amountGet,
-          tokenGive: this.orderForm.trade_order.tokenGive,
-          amountGive: this.orderForm.trade_order.amountGive,
-          expires: this.orderForm.trade_order.expires,
-          nonce: this.orderForm.trade_order.nonce,
-          user: this.orderForm.trade_order.user,
-          v: this.orderForm.trade_order.v,
-          r: this.orderForm.trade_order.r,
-          s: this.orderForm.trade_order.s,
-          amount: amount
-        }
-
-        this.trade(data)
-      }
-    }
   },
   computed: {
     ...mapGetters({
@@ -164,20 +138,6 @@ export default {
 .order-form
   display flex
   flex-wrap wrap
-
-  .header
-    display flex
-    align-items center
-    justify-content space-around
-    span
-      cursor pointer
-      margin-right 10px
-      color rgba(255, 255, 255, .5) !important
-      transition all .2s
-
-      &.active
-        color #fff !important
-        border-bottom 1px solid white
 
   .body
     display flex

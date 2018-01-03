@@ -105,13 +105,6 @@ const actions = {
       log("error ", error)
     })
   },
-  trade: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount}) => {
-    APIs.EtherDelta.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount).then(result => {
-      log("result ", result)
-    }).catch(error => {
-      log("error ", error)
-    })
-  },
 }
 
 

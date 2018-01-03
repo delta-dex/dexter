@@ -3,7 +3,7 @@
   .header
     span Confirm Order
     i.material-icons(@click="close(null)") close
-      
+
   .body
     .form
       .price.row
@@ -11,7 +11,7 @@
         span.details (ETH / {{current_market.currency}})
         span.amount {{orderForm.price}}
       .volume.row
-        span.label Volume 
+        span.label Volume
         span.details ({{current_market.currency}})
         span.amount {{orderForm.volume}}
       .total.row
@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'OrderModal',
   data(){
     return {
-      
+
     }
   },
   methods: {
@@ -61,7 +61,7 @@ export default {
 
 
 <style lang="stylus">
-@import "../styles/main.styl"
+@import "../../styles/main.styl"
 .order.modal
   flex-basis 20% !important
   .body
@@ -70,17 +70,17 @@ export default {
       display flex
       flex-wrap wrap
       flex-basis 100%
-      
+
       .row
         display flex
         flex-wrap wrap
         flex-basis 100%
         align-items center
-        
+
         .label
           font-size 14px
           font-weight 700
-          
+
         .details
           font-size 12px
           font-weight 400
@@ -90,7 +90,7 @@ export default {
           font-size 12px
           font-weight 700
           margin-left auto
-          
+
       .total
         border-top 1px solid $color-text
         padding-top 5px
@@ -101,7 +101,7 @@ export default {
       flex-basis 100%
       display flex
       border none
-      
+
       .button
         flex-basis 100%
         border none
@@ -112,10 +112,10 @@ export default {
         background $color-green-dark
         font-size 13px
         transition all .2s
-        
+
         span
           color white
-          
+
         &:hover
           background lighten($color-green-dark, 15%)
 
@@ -124,6 +124,6 @@ export default {
           &:hover
             background lighten($color-red, 15%)
 
-        
-      
+
+
 </style>

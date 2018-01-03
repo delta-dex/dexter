@@ -1,20 +1,22 @@
 <template lang="pug">
-transition(name="fade" mode='out-in')        
+transition(name="fade" mode='out-in')
   .modal-loader(v-if="currentModal" @click="close" ref="modal_loader")
     .modal-container(ref="modal_container")
       DepositModal(v-if="currentModal === 'DepositModal'")
       WithdrawModal(v-if="currentModal === 'WithdrawModal'")
       OrderModal(v-if="currentModal === 'OrderModal'")
-      LoadingOverlay(v-if="currentModal === 'LoadingOverlay'")      
-    
+      LoadingOverlay(v-if="currentModal === 'LoadingOverlay'")
+      TradeConfirmModal(v-if="currentModal === 'TradeConfirmModal'")
+
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import DepositModal from '@/components/DepositModal'
-import WithdrawModal from '@/components/WithdrawModal'
-import OrderModal from '@/components/OrderModal'
+import DepositModal from '@/components/modals/DepositModal'
+import WithdrawModal from '@/components/modals/WithdrawModal'
+import OrderModal from '@/components/modals/OrderModal'
 import LoadingOverlay from '@/components/LoadingOverlay'
+import TradeConfirmModal from '@/components/modals/TradeConfirmModal'
 
 export default {
   name: 'ModalLoader',
@@ -23,17 +25,18 @@ export default {
     WithdrawModal,
     OrderModal,
     LoadingOverlay,
+    TradeConfirmModal,
   },
   data(){
     return {
-      
+
     }
   },
   methods: {
     ...mapMutations({
       setCurrentModal: 'modal/SET_CURRENT_MODAL'
     }),
-    
+
     close(e){
       if(e.target == this.$refs.modal_loader || e.target == this.$refs.modal_container){
         this.setCurrentModal(null)
@@ -71,8 +74,8 @@ export default {
     display flex
     align-items center
     justify-content center
-    
 
-    
-      
+
+
+
 </style>
