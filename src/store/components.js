@@ -7,13 +7,19 @@ const state = {
   },
   modal_loader: {
     current_modal: null
+  },
+  toast: {
+    message: "",
+    duration: 2000,
+    visible: false
   }
 }
 
 // Getters
 var getters = {
-  navbar: (state, commit, rootState) => state.navbar,
-  modal_loader: (state, commit, rootState) => state.modal_loader,
+  navbar: (state) => state.navbar,
+  modal_loader: (state) => state.modal_loader,
+  toast: (state) => state.toast,
 }
 
 // Mutations
@@ -29,6 +35,13 @@ var mutations = {
   },
   ["CLOSE_MODAL"] (state) {
     state.modal_loader.current_modal = null
+  },
+  ["OPEN_TOAST"] (state, message) {
+    state.toast.message = message
+    state.toast.visible = true
+    setTimeout(()=> {
+      state.toast.visible = false
+    }, state.toast.duration)
   },
 
 }

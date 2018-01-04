@@ -9,17 +9,18 @@
 
 
   modal-loader
-
+  toast
 </template>
 
 <script>
 import Navbar from '@/components/Navbar'
 import ModalLoader from '@/components/ModalLoader'
-
+import Toast from '@/components/Toast'
 export default {
   components: {
     Navbar,
     ModalLoader,
+    Toast,
   },
   name: 'app',
   created(){
