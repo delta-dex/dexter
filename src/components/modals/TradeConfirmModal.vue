@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      close: "modal/SET_CURRENT_MODAL"
+      close: "components/CLOSE_MODAL"
     }),
     ...mapActions({
       trade: "trades/trade"

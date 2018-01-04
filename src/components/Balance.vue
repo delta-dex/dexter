@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      openModal: "modal/SET_CURRENT_MODAL"
+      openModal: "components/OPEN_MODAL"
     })
   },
   computed: {

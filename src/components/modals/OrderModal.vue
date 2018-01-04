@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      close: "modal/SET_CURRENT_MODAL"
+      close: "components/CLOSE_MODAL"
     }),
     placeOrder(){
       log("PLACE ORDER")

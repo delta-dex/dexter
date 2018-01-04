@@ -1,7 +1,7 @@
 <template lang="pug">
 #navbar
   .left
-    router-link.brand(:to="{name: 'exchange'}" tag="span") {{brand}}
+    router-link.brand(:to="{name: 'exchange'}" tag="span") {{navbar.brand}}
     .break
     .token-select
       // img(src="https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png")
@@ -37,7 +37,7 @@ export default {
     ...mapMutations({
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
-      openModal: "modal/SET_CURRENT_MODAL",
+      openModal: "components/OPEN_MODAL",
     }),
     ...mapActions({
       updateCurrentMarket: "markets/update_current_market",
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      brand: 'brand',
+      navbar: 'components/navbar',
       tokens: 'tokens/filtered_tokens',
       current_token: 'tokens/current_token',
       token_filter: 'tokens/token_filter',

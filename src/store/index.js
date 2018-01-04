@@ -7,7 +7,7 @@ import tokens from './tokens.js'
 import orders from './orders.js'
 import trades from './trades.js'
 
-import components from './components'
+import components from './components.js'
 
 Vue.use(Vuex)
 
@@ -19,9 +19,10 @@ const store = new Vuex.Store({
     orders: orders,
     trades: trades,
 
+    components: components
     // Components
-    navbar: components.Navbar,
-    modal: components.Modal,
+    // navbar: components.Navbar,
+    // modal: components.Modal,
   }
 })
 

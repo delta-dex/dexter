@@ -62,14 +62,15 @@ export default {
       updateEdWallet: 'users/update_ed_wallet',
     }),
     ...mapMutations({
-      openModal: "modal/SET_CURRENT_MODAL",
+      openModal: "components/OPEN_MODAL",
+      closeModal: "components/CLOSE_MODAL",
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
     }),
     initMarket(){
       log("INIT MARKET")
       this.updateCurrentMarket().then(market => {
-        this.openModal(null)
+        this.closeModal()
       }, error => {
         this.initMarket()
       })

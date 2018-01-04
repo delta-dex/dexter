@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      close: "modal/SET_CURRENT_MODAL"
+      close: "components/CLOSE_MODAL"
     }),
     depositEth(){
       APIs.EtherDelta.depositEth(this.eth_amount).then(result => {

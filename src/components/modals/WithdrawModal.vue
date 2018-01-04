@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      close: "modal/SET_CURRENT_MODAL"
+      close: "components/CLOSE_MODAL"
     }),
     withdrawEth(){
       APIs.EtherDelta.withdrawEth(this.eth_amount).then(result => {

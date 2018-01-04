@@ -66,7 +66,7 @@ export default {
   methods: {
     ...mapMutations({
       updateTradeOrder: 'trades/UPDATE_TRADE_ORDER',
-      updateModal: "modal/SET_CURRENT_MODAL"
+      openModal: "components/OPEN_MODAL",
     }),
     priceFormat(price){
       return parseFloat(price).toFixed(10)
@@ -77,7 +77,7 @@ export default {
     },
     onOrderSelected(order){
       this.updateTradeOrder(order)
-      this.updateModal("TradeConfirmModal")
+      this.openModal("TradeConfirmModal")
     },
     aggregate(orders){
       // let agg_orders = []

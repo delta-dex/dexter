@@ -1,12 +1,12 @@
 <template lang="pug">
 transition(name="fade" mode='out-in')
-  .modal-loader(v-if="currentModal" @click="close" ref="modal_loader")
+  .modal-loader(v-if="modalLoader.current_modal" @click="close" ref="modal_loader")
     .modal-container(ref="modal_container")
-      DepositModal(v-if="currentModal === 'DepositModal'")
-      WithdrawModal(v-if="currentModal === 'WithdrawModal'")
-      OrderModal(v-if="currentModal === 'OrderModal'")
-      LoadingOverlay(v-if="currentModal === 'LoadingOverlay'")
-      TradeConfirmModal(v-if="currentModal === 'TradeConfirmModal'")
+      DepositModal(v-if="modalLoader.current_modal === 'DepositModal'")
+      WithdrawModal(v-if="modalLoader.current_modal === 'WithdrawModal'")
+      OrderModal(v-if="modalLoader.current_modal === 'OrderModal'")
+      LoadingOverlay(v-if="modalLoader.current_modal === 'LoadingOverlay'")
+      TradeConfirmModal(v-if="modalLoader.current_modal === 'TradeConfirmModal'")
 
 </template>
 
@@ -34,18 +34,18 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setCurrentModal: 'modal/SET_CURRENT_MODAL'
+      closeModal: 'components/CLOSE_MODAL'
     }),
 
     close(e){
       if(e.target == this.$refs.modal_loader || e.target == this.$refs.modal_container){
-        this.setCurrentModal(null)
+        this.closeModal()
       }
     }
   },
   computed: {
     ...mapGetters({
-      currentModal: 'modal/current_modal'
+      modalLoader: 'components/modal_loader'
     }),
   },
   mounted(){
