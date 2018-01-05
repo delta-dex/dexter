@@ -6,7 +6,11 @@ import BigNumber from 'big-number'
 
 import ABIEtherDelta from './EtherDeltaABI.json'
 import ABIToken from './TokenABI.json'
-// const sha256 = require('js-sha256').sha256;
+import sha256 from'js-sha256'
+
+import ethjs from 'ethjs'
+console.log(ethjs)
+
 // const ethUtil = require('ethereumjs-util');
 // const Tx = require('ethereumjs-tx');
 
@@ -14,8 +18,10 @@ class EtherDelta {
   constructor() {
     // this.w3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/Ky03pelFIxoZdAUsr82w"))
     this.w3 = new Web3(web3.currentProvider)
-    this.contract = this.w3.eth.contract(ABIEtherDelta).at("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819")
+    this.contractAddr = "0x8d12a197cb00d4747a1fe03395095ce2a5cc6819"
+    this.contract = this.w3.eth.contract(ABIEtherDelta).at(this.contractAddr)
     this.contractToken = this.w3.eth.contract(ABIToken)
+
     this.ed_abi = ABIEtherDelta
     this.token_abi = ABIToken
   }
@@ -83,7 +89,7 @@ class EtherDelta {
   approve(token, amount){
     amount = this.w3.toWei(amount, 'ether')
     return new Promise((resolve, reject) => {
-      this.contractToken.at(token).approve("0x8d12a197cb00d4747a1fe03395095ce2a5cc6819", amount, function(error, result){
+      this.contractToken.at(token).approve(this.contractAddr, amount, function(error, result){
         if(!error){
           resolve(result)
         } else {
@@ -120,6 +126,7 @@ class EtherDelta {
   }
 
   placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce){
+    // This places an Order off-chain
     amountGive = this.w3.toWei(amountGive, 'ether')
     amountGet = this.w3.toWei(amountGet, 'ether')
     log("tokenGet: ", tokenGet)
@@ -129,16 +136,48 @@ class EtherDelta {
     log("expires: ", expires)
     log("nonce: ", nonce)
 
-
+    let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
+    let eth = new ethjs(web3.currentProvider)
     return new Promise((resolve, reject) => {
-      this.contract.order(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, function(error, result){
-        if(!error){
-          resolve(result)
-        } else {
-          reject(error)
-        }
+      // resolve(result)
+      eth.personal_sign(hash, this.w3.eth.defaultAccount).then((signed) => {
+        console.log('Signed!  Result is: ', signed)
+
+        let r = signed.substr(0, 64)
+        let s = signed.substr(64, 128)
+        let v = signed.substr(128, 130)
+
+        log(r)
+        log(s)
+        log(v)
+
+        this.socket.emit('order', {
+          tokenGet,
+          amountGet,
+          tokenGive,
+          amountGive,
+          expires,
+          nonce,
+          contractAddr: this.contractAddr,
+          user: this.w3.eth.defaultAccount,
+          v,
+          r,
+          s
+        })
+
+
       })
     })
+
+    // return new Promise((resolve, reject) => {
+    //   this.contract.order(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, function(error, result){
+    //     if(!error){
+    //       resolve(result)
+    //     } else {
+    //       reject(error)
+    //     }
+    //   })
+    // })
   }
 
   cancelOrder(tokenGive, tokenGet, amountGive, amountGet, expires, nonce){
