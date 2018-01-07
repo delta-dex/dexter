@@ -9,7 +9,6 @@ import ABIToken from './TokenABI.json'
 import sha256 from'js-sha256'
 
 import ethjs from 'ethjs'
-console.log(ethjs)
 
 // const ethUtil = require('ethereumjs-util');
 // const Tx = require('ethereumjs-tx');
@@ -136,48 +135,50 @@ class EtherDelta {
     log("expires: ", expires)
     log("nonce: ", nonce)
 
-    let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
-    let eth = new ethjs(web3.currentProvider)
+
     return new Promise((resolve, reject) => {
-      // resolve(result)
-      eth.personal_sign(hash, this.w3.eth.defaultAccount).then((signed) => {
-        console.log('Signed!  Result is: ', signed)
+      web3.eth.getBlockNumber((error, result)=> {
+        expires = result + expires
+        log(expires)
+        let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
 
-        let r = signed.substr(0, 64)
-        let s = signed.substr(64, 128)
-        let v = signed.substr(128, 130)
+        this.w3.eth.sign(this.w3.eth.defaultAccount, "0x"+hash, (error, result)=>{
+          if(error){
+            reject(error)
+          } else {
+            let sig = result.substr(2, result.length)
+            let r = '0x' + sig.substr(0, 64)
+            let s = '0x' + sig.substr(64, 64)
+            let v = parseInt("0x" + sig.substr(128, 2))
 
-        log(r)
-        log(s)
-        log(v)
-
-        this.socket.emit('order', {
-          tokenGet,
-          amountGet,
-          tokenGive,
-          amountGive,
-          expires,
-          nonce,
-          contractAddr: this.contractAddr,
-          user: this.w3.eth.defaultAccount,
-          v,
-          r,
-          s
+            let data = {
+              tokenGet,
+              amountGet,
+              tokenGive,
+              amountGive,
+              expires,
+              nonce,
+              contractAddr: this.contractAddr,
+              user: this.w3.eth.defaultAccount,
+              v,
+              r,
+              s
+            }
+            log("dataz: ", data)
+            this.socket.emit('message', data)
+            this.socket.once('messageResult', (messageResult) => {
+              if(!messageResult){
+                log("NO MessageResult, fuck")
+                reject()
+              } else {
+                log("messageResult", messageResult)
+                resolve(messageResult)
+              }
+            });
+          }
         })
-
-
       })
     })
-
-    // return new Promise((resolve, reject) => {
-    //   this.contract.order(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, function(error, result){
-    //     if(!error){
-    //       resolve(result)
-    //     } else {
-    //       reject(error)
-    //     }
-    //   })
-    // })
   }
 
   cancelOrder(tokenGive, tokenGet, amountGive, amountGet, expires, nonce){

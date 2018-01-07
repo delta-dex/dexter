@@ -28,6 +28,18 @@ window.onbeforeunload = function(event) {
   // store.dispatch("users/save_user")
 };
 
+String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
+
+    return result
+}
+
 new Vue({
   el: '#app',
   router,
@@ -35,4 +47,3 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
-
