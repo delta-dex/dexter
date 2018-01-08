@@ -7,9 +7,6 @@ import router from './router'
 import store from './store'
 import moment from 'moment'
 
-import BigNumber from 'big-number'
-window.bn = BigNumber
-
 // Sync the store with the router
 sync(store, router)
 
@@ -28,6 +25,7 @@ window.onbeforeunload = function(event) {
   // store.dispatch("users/save_user")
 };
 
+// Helpers TODO - move
 String.prototype.hexEncode = function(){
     var hex, i;
 
@@ -36,7 +34,6 @@ String.prototype.hexEncode = function(){
         hex = this.charCodeAt(i).toString(16);
         result += ("000"+hex).slice(-4);
     }
-
     return result
 }
 

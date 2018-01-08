@@ -1,13 +1,12 @@
 <template lang="pug">
 #protfolio-page
 
-  
+
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import APIs from '../store/apis'
-import BigNumber from 'big-number'
 import ABIEtherDelta from '../store/apis/EtherDelta/EtherDeltaABI.json'
 import ABIToken from '../store/apis/EtherDelta/TokenABI.json'
 
@@ -45,7 +44,7 @@ export default {
     // })
     // this.updateCurrentWallet()
     // this.updateEdWallet()
-    
+
     // var contractAbi = eth.contract(AbiOfContract);
     // var myContract = contractAbi.at(contractAddress);
     // // suppose you want to call a function named myFunction of myContract
@@ -81,16 +80,16 @@ export default {
     // })
 
     // log(data)
-    
+
     // web3.eth.sendTransaction({data: data}, function(err, transactionHash) {
     //   if (!err)
-    //     console.log(transactionHash); 
+    //     console.log(transactionHash);
     //   else
     //     log(err)
     // });
 
-    
-    
+
+
   }
 }
 </script>
@@ -100,6 +99,6 @@ export default {
   display flex
   flex-basis 100%
   height 100%
-  
-  
+
+
 </style>

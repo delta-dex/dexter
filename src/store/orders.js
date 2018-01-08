@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import APIs from './apis'
-import BigNumber from 'big-number'
 
 // State
 const state = {

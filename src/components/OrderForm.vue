@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import APIs from '@/store/apis'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'OrderForm',
@@ -61,7 +62,7 @@ export default {
     }),
     ...mapActions({
       placeOrder: "orders/place_order",
-     }),
+    }),
     alertUser(){
       if(!this.orderForm.trade_order){
         alert("Select an order from the Order Book to trade with")
@@ -70,22 +71,19 @@ export default {
     submitOrder(){
       if(this.validOrder){
         // Assume Eth
-        let tokenGive = '0x0000000000000000000000000000000000000000'
-        let tokenGet = '0x0000000000000000000000000000000000000000'
+        var tokenGive, tokenGet, amountGive, amountGet
 
+        // Convert amounts to Wei
         if(this.orderForm.order_type == "buy"){
-          tokenGet = this.token.addr
+          tokenGive = '0x0000000000000000000000000000000000000000'
+          tokenGet  = this.token.addr
+          amountGive = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
+          amountGet = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
         } else {
           tokenGive = this.token.addr
-        }
-
-        let amountGet = this.orderForm.volume
-        let amountGive = this.orderForm.volume
-
-        if(this.orderForm.order_type == "buy"){
-          amountGive = this.orderForm.volume * this.orderForm.price
-        } else {
-          amountGet = this.orderForm.volume * this.orderForm.price
+          tokenGet  = '0x0000000000000000000000000000000000000000'
+          amountGive = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
+          amountGet = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
         }
 
         let data = {
@@ -102,7 +100,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      orderForm: "orders/order_form"
+      orderForm: "orders/order_form",
     }),
     validOrder(){
       if(parseFloat(this.orderForm.price) <= 0){

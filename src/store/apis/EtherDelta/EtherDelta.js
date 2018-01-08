@@ -2,7 +2,7 @@
 
 import config from './EtherDeltaConfig.json'
 import io from 'socket.io-client'
-import BigNumber from 'big-number'
+import BigNumber from 'bignumber.js'
 
 import ABIEtherDelta from './EtherDeltaABI.json'
 import ABIToken from './TokenABI.json'
@@ -124,10 +124,25 @@ class EtherDelta {
     })
   }
 
+  trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount){
+    amount = this.w3.toWei(amount, 'ether')
+    return new Promise((resolve, reject) => {
+      this.contract.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount, function(error, result){
+        if(!error){
+          resolve(result)
+        } else {
+          reject(error)
+        }
+      })
+    })
+  }
+
+  toWei(amount, decimals){
+    return new BigNumber(String(amount)).times(new BigNumber(10 ** decimals)).floor()
+  }
+
   placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce){
     // This places an Order off-chain
-    amountGive = this.w3.toWei(amountGive, 'ether')
-    amountGet = this.w3.toWei(amountGet, 'ether')
     log("tokenGet: ", tokenGet)
     log("amountGet: ", amountGet)
     log("tokenGive: ", tokenGive)
@@ -135,14 +150,26 @@ class EtherDelta {
     log("expires: ", expires)
     log("nonce: ", nonce)
 
-
     return new Promise((resolve, reject) => {
       web3.eth.getBlockNumber((error, result)=> {
         expires = result + expires
-        log(expires)
-        let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
 
-        this.w3.eth.sign(this.w3.eth.defaultAccount, "0x"+hash, (error, result)=>{
+        // let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
+        let data_to_pack = [
+          this.contractAddr,
+          tokenGet,
+          amountGet,
+          tokenGive,
+          amountGive,
+          expires,
+          nonce
+        ]
+        let packed_data = this._pack(data_to_pack, [160, 160, 256, 160, 256, 256, 256])
+        let hash = `0x${sha256(new Buffer(packed_data, 'hex'))}`
+        log("HASHED: ", hash)
+
+
+        this.w3.eth.sign(this.w3.eth.defaultAccount, hash, (error, result)=>{
           if(error){
             reject(error)
           } else {
@@ -153,9 +180,9 @@ class EtherDelta {
 
             let data = {
               tokenGet,
-              amountGet,
+              amountGet: amountGet.toString(),
               tokenGive,
-              amountGive,
+              amountGive: amountGive.toString(),
               expires,
               nonce,
               contractAddr: this.contractAddr,
@@ -164,6 +191,8 @@ class EtherDelta {
               r,
               s
             }
+
+
             log("dataz: ", data)
             this.socket.emit('message', data)
             this.socket.once('messageResult', (messageResult) => {
@@ -193,17 +222,103 @@ class EtherDelta {
     })
   }
 
-  trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount){
-    amount = this.w3.toWei(amount, 'ether')
-    return new Promise((resolve, reject) => {
-      this.contract.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount, function(error, result){
-        if(!error){
-          resolve(result)
+  _pack(dataIn, lengths){
+      let packed = '';
+      const data = dataIn.map(x => x);
+      for (let i = 0; i < lengths.length; i += 1) {
+        if (typeof (data[i]) === 'string' && data[i].substring(0, 2) === '0x') {
+          if (data[i].substring(0, 2) === '0x') data[i] = data[i].substring(2);
+          packed += this._zeroPad(data[i], lengths[i] / 4);
+        } else if (typeof (data[i]) !== 'number' && !(data[i] instanceof BigNumber) && /[a-f]/.test(data[i])) {
+          if (data[i].substring(0, 2) === '0x') data[i] = data[i].substring(2);
+          packed += this._zeroPad(data[i], lengths[i] / 4);
         } else {
-          reject(error)
+          packed += this._zeroPad(this._decToHex(data[i], lengths[i]), lengths[i] / 4);
         }
-      })
-    })
+      }
+    return packed;
+  }
+
+  _parseToDigitsArray(str, base){
+    const digits = str.split('');
+    const ary = [];
+    for (let i = digits.length - 1; i >= 0; i -= 1) {
+      const n = parseInt(digits[i], base);
+      if (isNaN(n)) return null;
+      ary.push(n);
+    }
+    return ary;
+  }
+  _add(x, y, base){
+    const z = [];
+    const n = Math.max(x.length, y.length);
+    let carry = 0;
+    let i = 0;
+    while (i < n || carry) {
+      const xi = i < x.length ? x[i] : 0;
+      const yi = i < y.length ? y[i] : 0;
+      const zi = carry + xi + yi;
+      z.push(zi % base);
+      carry = Math.floor(zi / base);
+      i += 1;
+    }
+    return z;
+  }
+  _multiplyByNumber(numIn, x, base){
+    let num = numIn;
+    if (num < 0) return null;
+    if (num === 0) return [];
+    let result = [];
+    let power = x;
+    while (true) { // eslint-disable-line no-constant-condition
+      if (num & 1) { // eslint-disable-line no-bitwise
+        result = this._add(result, power, base);
+      }
+      num = num >> 1; // eslint-disable-line operator-assignment, no-bitwise
+      if (num === 0) break;
+      power = this._add(power, power, base);
+    }
+    return result;
+  }
+  _convertBase(str, fromBase, toBase){
+    const digits = this._parseToDigitsArray(str, fromBase);
+    if (digits === null) return null;
+    let outArray = [];
+    let power = [1];
+    for (let i = 0; i < digits.length; i += 1) {
+      if (digits[i]) {
+        outArray = this._add(outArray, this._multiplyByNumber(digits[i], power, toBase), toBase);
+      }
+      power = this._multiplyByNumber(fromBase, power, toBase);
+    }
+    let out = '';
+    for (let i = outArray.length - 1; i >= 0; i -= 1) {
+      out += outArray[i].toString(toBase);
+    }
+    if (out === '') out = 0;
+    return out;
+  }
+  _zeroPad(num, places){
+    const zero = (places - num.toString().length) + 1;
+    return Array(+(zero > 0 && zero)).join('0') + num;
+  }
+  _decToHex(dec, lengthIn){
+    let length = lengthIn;
+    if (!length) length = 32;
+    if (dec < 0) {
+      // return convertBase((Math.pow(2, length) + decStr).toString(), 10, 16);
+      return (new BigNumber(2)).pow(length).add(new BigNumber(dec)).toString(16);
+    }
+    let result = null;
+    try {
+      result = this._convertBase(dec.toString(), 10, 16);
+    } catch (err) {
+      result = null;
+    }
+    if (result) {
+      return result;
+    }
+    return (new BigNumber(dec)).toString(16);
   }
 }
 
