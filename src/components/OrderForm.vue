@@ -92,7 +92,7 @@ export default {
           tokenGive,
           amountGive,
           expires: this.orderForm.expires,
-          nonce: parseInt(10000000 * Math.random())
+          nonce: parseInt(1000000000 * Math.random())
         }
         this.placeOrder(data)
       }

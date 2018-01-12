@@ -152,7 +152,7 @@ class EtherDelta {
 
     return new Promise((resolve, reject) => {
       web3.eth.getBlockNumber((error, result)=> {
-        expires = result + expires
+        expires = parseInt(result) + parseInt(expires)
 
         // let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
         let data_to_pack = [
@@ -169,13 +169,15 @@ class EtherDelta {
         log("HASHED: ", hash)
 
 
+
         this.w3.eth.sign(this.w3.eth.defaultAccount, hash, (error, result)=>{
           if(error){
             reject(error)
           } else {
+            log(result)
             let sig = result.substr(2, result.length)
-            let r = '0x' + sig.substr(0, 64)
-            let s = '0x' + sig.substr(64, 64)
+            let r = "0x" + sig.substr(0, 64)
+            let s = "0x" + sig.substr(64, 64)
             let v = parseInt("0x" + sig.substr(128, 2))
 
             let data = {
@@ -187,11 +189,10 @@ class EtherDelta {
               nonce,
               contractAddr: this.contractAddr,
               user: this.w3.eth.defaultAccount,
-              v,
               r,
-              s
+              s,
+              v,
             }
-
 
             log("dataz: ", data)
             this.socket.emit('message', data)
