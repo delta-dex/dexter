@@ -154,7 +154,6 @@ class EtherDelta {
       web3.eth.getBlockNumber((error, result)=> {
         expires = parseInt(result) + parseInt(expires)
 
-        // let hash = sha256(this.contractAddr, tokenGet, amountGet, tokenGive, amountGive, expires, nonce)
         let data_to_pack = [
           this.contractAddr,
           tokenGet,
@@ -166,11 +165,10 @@ class EtherDelta {
         ]
         let packed_data = this._pack(data_to_pack, [160, 160, 256, 160, 256, 256, 256])
         let hash = `0x${sha256(new Buffer(packed_data, 'hex'))}`
-        log("HASHED: ", hash)
+        let msg = this._prefixMessage(hash);
 
-
-
-        this.w3.eth.sign(this.w3.eth.defaultAccount, hash, (error, result)=>{
+        log("msg: ",  msg)
+        this.w3.eth.sign(this.w3.eth.defaultAccount, msg, (error, result)=>{
           if(error){
             reject(error)
           } else {
@@ -222,7 +220,6 @@ class EtherDelta {
       }
     })
   }
-
   _pack(dataIn, lengths){
       let packed = '';
       const data = dataIn.map(x => x);
@@ -239,7 +236,6 @@ class EtherDelta {
       }
     return packed;
   }
-
   _parseToDigitsArray(str, base){
     const digits = str.split('');
     const ary = [];
@@ -320,6 +316,16 @@ class EtherDelta {
       return result;
     }
     return (new BigNumber(dec)).toString(16);
+  }
+  _prefixMessage(msgIn){
+    let msg = msgIn;
+    msg = new Buffer(msg.slice(2), 'hex');
+    msg = Buffer.concat([
+      new Buffer(`\x19Ethereum Signed Message:\n${msg.length.toString()}`),
+      msg]);
+    msg = this.w3.sha3(`0x${msg.toString('hex')}`, { encoding: 'hex' });
+    msg = new Buffer(msg.slice(2), 'hex');
+    return `0x${msg.toString('hex')}`;
   }
 }
 
