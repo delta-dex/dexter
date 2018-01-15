@@ -7,6 +7,7 @@ transition(name="fade" mode='out-in')
       OrderModal(v-if="modalLoader.current_modal === 'OrderModal'")
       LoadingOverlay(v-if="modalLoader.current_modal === 'LoadingOverlay'")
       TradeConfirmModal(v-if="modalLoader.current_modal === 'TradeConfirmModal'")
+      OrderConfirmModal(v-if="modalLoader.current_modal === 'OrderConfirmModal'")
 
 </template>
 
@@ -17,6 +18,7 @@ import WithdrawModal from '@/components/modals/WithdrawModal'
 import OrderModal from '@/components/modals/OrderModal'
 import LoadingOverlay from '@/components/LoadingOverlay'
 import TradeConfirmModal from '@/components/modals/TradeConfirmModal'
+import OrderConfirmModal from '@/components/modals/OrderConfirmModal'
 
 export default {
   name: 'ModalLoader',
@@ -26,6 +28,7 @@ export default {
     OrderModal,
     LoadingOverlay,
     TradeConfirmModal,
+    OrderConfirmModal,
   },
   data(){
     return {

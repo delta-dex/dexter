@@ -62,27 +62,23 @@ const getters = {
   },
 }
 
-var formatOrders = function(orders){
-  return orders.map(order => {
-    order.amount = Math.abs(parseFloat(order.amount) / Math.pow(10, 18))
-    order.price = Math.abs(parseFloat(order.price))
-    return order
-  })
+var formatOrders = function(orders, current_token){
+  log("current_token", current_token)
 }
 
 // Mutations
 const mutations = {
   ["UPDATE_BUY_ORDERS"] (state, orders) {
-    state.buy_orders = formatOrders(orders)
+    state.buy_orders = orders
   },
   ["UPDATE_SELL_ORDERS"] (state, orders) {
-    state.sell_orders = formatOrders(orders)
+    state.sell_orders = orders
   },
   ["ADD_BUY_ORDERS"] (state, orders) {
-    state.buy_orders = formatOrders(orders).concat(state.buy_orders)
+    state.buy_orders = orders.concat(state.buy_orders)
   },
   ["ADD_SELL_ORDERS"] (state, orders) {
-    state.sell_orders = formatOrders(orders).concat(state.sell_orders)
+    state.sell_orders = orders.concat(state.sell_orders)
   },
   ["UPDATE_ORDER_FORM"] (state, form) {
     state.order_form = Object.assign({}, state.order_form, form)
@@ -91,10 +87,12 @@ const mutations = {
 
 // Actions
 const actions = {
-  watch_orders: ({commit, state}) => {
+  watch_orders: ({dispatch, commit, state, rootState}) => {
     APIs.EtherDelta.socket.on('orders', (orders) => {
-      commit("ADD_BUY_ORDERS", orders.buys)
-      commit("ADD_SELL_ORDERS", orders.sells)
+      let sell_orders = APIs.EtherDelta.parseOrders(orders.sells, rootState.tokens.current_token)
+      let buy_orders =  APIs.EtherDelta.parseOrders(orders.buys, rootState.tokens.current_token)
+      commit("ADD_BUY_ORDERS", sell_orders)
+      commit("ADD_SELL_ORDERS", buy_orders)
     })
   },
   place_order: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce}) => {

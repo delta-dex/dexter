@@ -40,6 +40,7 @@ const mutations = {
 const actions = {
   watch_trades: ({commit, state}) => {
     APIs.EtherDelta.socket.on('trades', (trades) => {
+      log("watch_trades: ", trades)
       commit("ADD_TRADES", trades)
     })
   },

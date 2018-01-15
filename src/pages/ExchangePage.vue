@@ -58,7 +58,8 @@ export default {
       watchOrders: 'orders/watch_orders',
       watchTrades: 'trades/watch_trades',
       updateCurrentWallet: 'users/update_current_wallet',
-      updateCurrentMarket: 'markets/update_current_market',
+      initCurrentMarket: 'markets/init_current_market',
+      watchCurrentMarket: 'markets/watch_current_market',
       updateEdWallet: 'users/update_ed_wallet',
     }),
     ...mapMutations({
@@ -67,14 +68,40 @@ export default {
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
     }),
-    initMarket(){
-      log("INIT MARKET")
-      this.updateCurrentMarket().then(market => {
+    initMarket(trys=0){
+      // log("trys: ", trys)
+      this.initCurrentMarket().then(market => {
         this.closeModal()
+        // this.watchMarket()
       }, error => {
-        this.initMarket()
+        // back off, ED rate limit is 12 req/min
+        if(trys > 6){
+          trys = 0
+        } else {
+          trys++
+        }
+        setTimeout(()=>{
+          this.initMarket(trys)
+        }, trys * 1000)
       })
-    }
+    },
+    watchMarket(){
+      log("Watching Market")
+      this.watchCurrentMarket().then(market => {
+
+      }, error => {
+        // TODO back off, ED rate limit is 12 req/min
+        // this.watchMarket()
+      })
+    },
+    watchWallets(){
+      this.updateCurrentWallet()
+      this.updateEdWallet()
+      setInterval(()=> {
+        this.updateCurrentWallet()
+        this.updateEdWallet()
+      }, 5000)
+    },
   },
   watch: {
     trades: function(){
@@ -97,20 +124,13 @@ export default {
       }
     }
 
-    APIs.EtherDelta.initSocket().then(socket => {
+    // After the ED websocket has been initialized, init, and then watch the market
+    APIs.EtherDelta.initSocket().then(() => {
       this.initMarket()
     })
 
-    this.updateCurrentWallet()
-    this.updateEdWallet()
-
-    // Update both wallets every second
-    setInterval(()=> {
-      this.updateCurrentWallet()
-      this.updateEdWallet()
-    }, 5000)
-
-    window.ed = APIs.EtherDelta
+    // Update wallets, and then update again every 5 seconds
+    this.watchWallets()
   },
   mounted(){
 

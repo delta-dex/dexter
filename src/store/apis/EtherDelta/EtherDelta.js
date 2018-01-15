@@ -31,6 +31,14 @@ class EtherDelta {
       this.socket.on('connect', () => {
         resolve(this.socket)
       })
+      this.socket.on('error', error => {
+        console.log("EtherDelta socket error: ", error)
+      })
+      this.socket.on('disconnect', disconnect => {
+        console.log("EtherDelta socket disconnect: ", disconnect)
+        this.socket.open()
+      })
+
     });
   }
 
@@ -193,18 +201,28 @@ class EtherDelta {
             }
 
             log("dataz: ", data)
-            this.socket.emit('message', data)
-            this.socket.once('messageResult', (messageResult) => {
-              if(!messageResult){
-                log("NO MessageResult, fuck")
-                reject()
-              } else {
-                log("messageResult", messageResult)
-                resolve(messageResult)
-              }
-            });
+            this.submitOrder(data).then(results=> {
+              log(results)
+            }, error => {
+              log(error)
+            })
           }
         })
+      })
+    })
+  }
+
+  submitOrder(data){
+    return new Promise((resolve, reject) =>{
+      this.socket.emit('message', data)
+      this.socket.once('messageResult', (result) => {
+        if(!result || result =="order result Failed to find existing orders."){
+          log("Order Error: ", result)
+          reject(result)
+        } else {
+          log("order result", result)
+          resolve(result)
+        }
       })
     })
   }
@@ -327,6 +345,34 @@ class EtherDelta {
     msg = new Buffer(msg.slice(2), 'hex');
     return `0x${msg.toString('hex')}`;
   }
+
+  parseOrders(orders, currentToken){
+    return orders.filter(order => {
+      if(order.tokenGet === currentToken.addr || order.tokenGive === currentToken.addr){
+        return true
+      } else {
+        return false
+      }
+    }).map(order => {
+      order.amount = Math.abs(parseFloat(order.amount) / Math.pow(10, currentToken.decimals))
+      order.price = Math.abs(parseFloat(order.price))
+      return order
+    })
+  }
+  parseTrades(trades, currentToken){
+    return trades.filter(trade => {
+      if(trade.tokenAddr === currentToken.addr || trade.tokenAddr === currentToken.addr){
+        return true
+      } else {
+        return false
+      }
+    }).map(trade => {
+      trade.amount = Math.abs(parseFloat(trade.amount))
+      trade.price = Math.abs(parseFloat(trade.price))
+      return trade
+    })
+  }
+
 }
 
 export default new EtherDelta()
