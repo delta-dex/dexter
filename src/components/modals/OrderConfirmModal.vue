@@ -1,31 +1,30 @@
 <template lang="pug">
 .order-confirm.modal.component
   .header
-    span.trade-type CONFIRM {{tradeType}} ORDER
+    span.trade-type CONFIRM {{orderForm.order_type.toUpperCase()}} ORDER
     i.material-icons(@click="close(null)") close
   .body
     .form
       .field
         .info
-          span Amount to {{tradeType}} ({{token.name}})
-          span.max(@click="maxAmount()") (max)
-        input(v-model="amount" min="0" type="number")
+          span Amount to {{orderForm.order_type.toUpperCase()}} ({{token.name}})
+        input(v-model="orderForm.volume" disabled)
       .field
         .info
           span Price ({{token.name}} / ETH)
-        input(v-model="tradeOrder.price" disabled)
+        input(v-model="orderForm.price" disabled)
       .field.fee
         .info
-          span(v-if="tradeType === 'sell'") Fee ({{token.name}})
+          span(v-if="orderForm.order_type === 'sell'") Fee ({{token.name}})
           span(v-else) Fee (ETH)
           span.amount {{fee.toFixed(10)}}
       .field.order
         .info
           span Order (ETH)
-          span.amount {{total.toFixed(10)}}
+          span.amount {{(orderForm.price * orderForm.volume).toFixed(10)}}
       .field
-        .button(@click="submitTrade()" :class="{'sell': tradeType === 'sell'}")
-          span {{tradeType}} {{amount}} {{token.name}} @{{tradeOrder.price}}
+        .button(@click="submitOrder()" :class="{'sell': orderForm.order_type === 'sell'}")
+          span {{orderForm.order_type.toUpperCase()}} {{orderForm.volume}} {{token.name}} @ {{orderForm.price}} ETH
 </template>
 
 <script>
@@ -34,109 +33,56 @@ import APIs from '@/store/apis'
 
 export default {
   name: 'OrderConfirmModal',
-  data(){
-    return {
-      amount: 0
-    }
-  },
   methods: {
     ...mapMutations({
       close: "components/CLOSE_MODAL"
     }),
     ...mapActions({
-      trade: "trades/trade"
+      placeOrder: "orders/place_order",
     }),
-    maxAmount(){
-      let max = this.tradeOrder.ethAvailableVolume
+    submitOrder(){
+      let tokenGive, tokenGet, amountGive, amountGet
 
-      if(max > parseFloat(this.ed_wallet.current_token_balance)){
-        log("?????")
-        max = this.ed_wallet.current_token_balance
+      // Convert amounts to Wei
+      if(this.orderForm.order_type == "buy"){
+        tokenGive = '0x0000000000000000000000000000000000000000'
+        tokenGet  = this.token.addr
+        amountGive = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
+        amountGet = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
+      } else {
+        tokenGive = this.token.addr
+        tokenGet  = '0x0000000000000000000000000000000000000000'
+        amountGive = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
+        amountGet = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
       }
-      log(max)
-      this.amount = max
-    },
-    submitTrade(){
-      if(this.validTrade){
-        let amount = this.amount
-        if(this.tradeType === "buy"){
-          amount = this.amount * this.tradeOrder.price
-        }
 
-        let data = {
-          tokenGet: this.tradeOrder.tokenGet,
-          amountGet: this.tradeOrder.amountGet,
-          tokenGive: this.tradeOrder.tokenGive,
-          amountGive: this.tradeOrder.amountGive,
-          expires: this.tradeOrder.expires,
-          nonce: this.tradeOrder.nonce,
-          user: this.tradeOrder.user,
-          v: this.tradeOrder.v,
-          r: this.tradeOrder.r,
-          s: this.tradeOrder.s,
-          amount: amount
-        }
-
-        // TODO show loading
-        this.trade(data)
+      let data = {
+        tokenGet,
+        amountGet,
+        tokenGive,
+        amountGive,
+        expires: this.orderForm.expires,
+        nonce: parseInt(1000000000 * Math.random())
       }
+      this.placeOrder(data)
     }
   },
   computed: {
     ...mapGetters({
+      orderForm: "orders/order_form",
       token: 'tokens/current_token',
-      tradeOrder: 'trades/trade_order',
       wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
     }),
-    maxVolume(){
-      let max = this.ed_wallet.current_token_balance
-      if(max > this.tradeOrder.ethAvailableVolume){
-        max = this.tradeOrder.ethAvailableVolume
-      }
-      return max
-    },
-    validTrade(){
-      if(parseFloat(this.tradeOrder.price) <= 0){
-        return false
-      }
-      if(parseFloat(this.amount) <= 0){
-        return false
-      }
-      if(parseInt(this.tradeOrder.expires) <= 0){
-        return false
-      }
-      return true
-    },
-    total(){
-      if(this.amount == 0 || this.tradeOrder.price == 0){
-        return 0
-      }
-
-      let total = this.tradeOrder.price * this.amount
-      return total
-      // return Math.round(total, -2)
-    },
     fee(){
-      if(this.amount == 0 || this.tradeOrder.price == 0){
-        return 0
-      }
-
-      if(this.tradeType === 'buy'){
-        return parseFloat(this.amount) * parseFloat(this.tradeOrder.price) * .003
+      if(this.orderForm.order_type === 'buy'){
+        return parseFloat(this.orderForm.volume) * parseFloat(this.orderForm.price) * .003
       } else {
-        return parseFloat(this.amount) * .003
+        return parseFloat(this.orderForm.volume) * .003
       }
-
     },
-    tradeType(){
-      if(this.tradeOrder.tokenGet === "0x0000000000000000000000000000000000000000"){
-        return "buy"
-      } else {
-        return "sell"
-      }
-    }
-   },
+
+  },
   mounted(){
 
   }

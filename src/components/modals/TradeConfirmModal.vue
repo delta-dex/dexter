@@ -25,7 +25,7 @@
           span.amount {{total.toFixed(10)}}
       .field
         .button(@click="submitTrade()" :class="{'sell': tradeType === 'sell'}")
-          span {{tradeType}} {{amount}} {{token.name}} @{{tradeOrder.price}}
+          span {{tradeType}} {{amount}} {{token.name}} @ {{tradeOrder.price}} ETH
 </template>
 
 <script>

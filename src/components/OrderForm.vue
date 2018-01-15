@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      openModal: "modal/SET_CURRENT_MODAL",
+      openModal: "components/OPEN_MODAL",
       updateOrderForm: 'orders/UPDATE_ORDER_FORM',
     }),
     ...mapActions({
@@ -70,31 +70,32 @@ export default {
     },
     submitOrder(){
       if(this.validOrder){
-        // Assume Eth
-        var tokenGive, tokenGet, amountGive, amountGet
+        this.openModal("OrderConfirmModal")
+        // // Assume Eth
+        // var tokenGive, tokenGet, amountGive, amountGet
 
-        // Convert amounts to Wei
-        if(this.orderForm.order_type == "buy"){
-          tokenGive = '0x0000000000000000000000000000000000000000'
-          tokenGet  = this.token.addr
-          amountGive = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
-          amountGet = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
-        } else {
-          tokenGive = this.token.addr
-          tokenGet  = '0x0000000000000000000000000000000000000000'
-          amountGive = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
-          amountGet = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
-        }
+        // // Convert amounts to Wei
+        // if(this.orderForm.order_type == "buy"){
+        //   tokenGive = '0x0000000000000000000000000000000000000000'
+        //   tokenGet  = this.token.addr
+        //   amountGive = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
+        //   amountGet = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
+        // } else {
+        //   tokenGive = this.token.addr
+        //   tokenGet  = '0x0000000000000000000000000000000000000000'
+        //   amountGive = APIs.EtherDelta.toWei(this.orderForm.volume, this.token.decimals)
+        //   amountGet = APIs.EtherDelta.toWei(this.orderForm.volume * this.orderForm.price, 18)
+        // }
 
-        let data = {
-          tokenGet,
-          amountGet,
-          tokenGive,
-          amountGive,
-          expires: this.orderForm.expires,
-          nonce: parseInt(1000000000 * Math.random())
-        }
-        this.placeOrder(data)
+        // let data = {
+        //   tokenGet,
+        //   amountGet,
+        //   tokenGive,
+        //   amountGive,
+        //   expires: this.orderForm.expires,
+        //   nonce: parseInt(1000000000 * Math.random())
+        // }
+        // this.placeOrder(data)
       }
     },
   },

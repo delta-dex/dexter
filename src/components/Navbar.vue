@@ -38,9 +38,10 @@ export default {
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       openModal: "components/OPEN_MODAL",
+      closeModal: "components/CLOSE_MODAL",
     }),
     ...mapActions({
-      updateCurrentMarket: "markets/update_current_market",
+      initCurrentMarket: 'markets/init_current_market',
     }),
     onFilterChange(e){
       this.updateTokenFilter(e.target.value)
@@ -48,12 +49,25 @@ export default {
     onTokenSelect(token){
       this.openModal("LoadingOverlay")
       this.updateCurrentToken(token)
-      this.updateCurrentMarket().then(market => {
-        this.openModal(null)
+      this.initMarket()
+    },
+    initMarket(trys=0){
+      // log("trys: ", trys)
+      this.initCurrentMarket().then(market => {
+        this.closeModal()
+        // this.watchMarket()
       }, error => {
-        this.onTokenSelect()
+        // back off, ED rate limit is 12 req/min
+        if(trys > 6){
+          trys = 0
+        } else {
+          trys++
+        }
+        setTimeout(()=>{
+          this.initMarket(trys)
+        }, trys * 1000)
       })
-    }
+    },
   },
   computed: {
     ...mapGetters({
