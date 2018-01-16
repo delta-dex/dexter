@@ -8,7 +8,7 @@ Vue.use(Router)
 const router = new Router({
   base: '/',
   routes: [
-    {path: '*', redirect: '/exchange/AMD'},
+    {path: '*', redirect: '/exchange/AMB'},
     {path: '/exchange/:token', name: 'exchange', component: Pages.ExchangePage},
     // {path: '/currencies/:symbol', name: 'currency', component: Pages.CurrencyPage},
     // {path: '/arbitrage', name: 'arbitrage', component: Pages.ArbitragePage},

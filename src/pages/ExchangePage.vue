@@ -71,11 +71,11 @@ export default {
     initMarket(trys=0){
       // log("trys: ", trys)
       this.initCurrentMarket().then(market => {
-        this.closeModal()
+        // this.closeModal()
         // this.watchMarket()
       }, error => {
         // back off, ED rate limit is 12 req/min
-        if(trys > 6){
+        if(trys > 12){
           trys = 0
         } else {
           trys++
@@ -111,7 +111,7 @@ export default {
     }
   },
   created(){
-    this.openModal("LoadingOverlay")
+    // this.openModal("LoadingOverlay")
     let param_token = null
     if(this.$route.params.token){
       param_token = this.tokens.find(t => {

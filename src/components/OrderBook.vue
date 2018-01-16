@@ -33,13 +33,18 @@
             span.price {{priceFormat(order.price)}}
           .info.time-container
             span.time {{timeFormat(order.updated)}}
-
+  overlay(:visible="orderBook.loading")
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import Overlay from '@/components/Overlay'
+
 export default {
   name: 'OrderBook',
+  components: {
+    Overlay
+  },
   data(){
     return {
       orders: [],
@@ -102,7 +107,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-
+      orderBook: "components/order_book",
     }),
     agg_buys(){
       return this.buys
@@ -152,6 +157,7 @@ export default {
   flex-wrap wrap
   height 100%
   overflow hidden
+  position relative
 
   .header
     display flex

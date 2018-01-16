@@ -39,6 +39,7 @@ export default {
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       openModal: "components/OPEN_MODAL",
       closeModal: "components/CLOSE_MODAL",
+      showAllLoading: "components/SHOW_ALL_LOADING",
     }),
     ...mapActions({
       initCurrentMarket: 'markets/init_current_market',
@@ -47,7 +48,7 @@ export default {
       this.updateTokenFilter(e.target.value)
     },
     onTokenSelect(token){
-      this.openModal("LoadingOverlay")
+      this.showAllLoading()
       this.updateCurrentToken(token)
       this.initMarket()
     },

@@ -21,15 +21,19 @@
             span.price {{priceFormat(order.price)}}
           .info.time-container
             span.time {{timeFormat(order.date)}}
-
+  overlay(:visible="orderHistory.loading")
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
+import Overlay from '@/components/Overlay'
 
 export default {
   name: 'OrderHistory',
+  components: {
+    Overlay
+  },
   data(){
     return {
       openOrders: false
@@ -67,7 +71,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-
+      orderHistory: "components/order_history",
     }),
     orders(){
       if(!this.openOrders){
@@ -110,6 +114,7 @@ export default {
   flex-wrap wrap
   height 100%
   overflow hidden
+  position relative
 
   .header
     display flex

@@ -17,20 +17,25 @@
           .info.time-container
             span.time {{timeFormat(trade.date)}}
 
-
+  overlay(:visible="tradeHistory.loading")
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'  
+import { mapGetters, mapMutations } from 'vuex'
+import Overlay from '@/components/Overlay'
+
 export default {
   name: 'TradeHistory',
+  components: {
+    Overlay
+  },
   data(){
     return {
       dateFormatter: new Intl.DateTimeFormat('en-US', {
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
-        hour12: false,        
+        hour12: false,
       })
     }
   },
@@ -66,9 +71,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-
-    ]),
+    ...mapGetters({
+      tradeHistory: "components/trade_history",
+    }),
     maxAmount(){
       let max = 0
       this.trades.forEach(t => {
@@ -94,6 +99,7 @@ export default {
   display flex
   flex-wrap wrap
   height 100%
+  position relative
 
   .body
     display flex
@@ -109,7 +115,7 @@ export default {
       // justify-content space-around
       border-bottom solid 1px lighten($color-component-background, 13%)
       box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
-      
+
       span
         text-align right
         font-size 13px
@@ -134,14 +140,14 @@ export default {
         display flex
         flex-basis 100%
         cursor pointer
-        
+
         .trade
           display flex
           flex-basis 100%
           align-items center
           justify-content space-around
 
-          
+
           span
             font-size 11px
             font-weight 700
@@ -153,7 +159,7 @@ export default {
             line-height 1
             align-items center
             justify-content center
-            
+
           .volume-container
             justify-content flex-end
             flex-basis 40%
@@ -163,19 +169,19 @@ export default {
             flex-basis 35%
             justify-content center
             padding 2px 0px
-            
+
           .time-container
             line-height 1
             flex-basis 25%
-            
+
           &.sell
             span.price
               color $color-red
           &.buy
             span.price
               color $color-green
-              
+
           &:hover
             background lighten($color-component-background, 15%)
-          
+
 </style>

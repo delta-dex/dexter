@@ -96,10 +96,12 @@ const actions = {
     })
   },
   place_order: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce}) => {
-    APIs.EtherDelta.placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce).then(result => {
+    return APIs.EtherDelta.placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce).then(result => {
       log("result ", result)
-    }).catch(error => {
+      return result
+    }, error => {
       log("error ", error)
+      throw error
     })
   },
 }

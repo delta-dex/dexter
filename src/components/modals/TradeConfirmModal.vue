@@ -26,14 +26,19 @@
       .field
         .button(@click="submitTrade()" :class="{'sell': tradeType === 'sell'}")
           span {{tradeType}} {{amount}} {{token.name}} @ {{tradeOrder.price}} ETH
+  overlay(:visible="tradeConfirm.loading")
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import APIs from '@/store/apis'
+import Overlay from '@/components/Overlay'
 
 export default {
   name: 'TradeConfirmModal',
+  components: {
+    Overlay
+  },
   data(){
     return {
       amount: 0
@@ -41,7 +46,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      close: "components/CLOSE_MODAL"
+      close: "components/CLOSE_MODAL",
+      updateOverlay: "components/UPDATE_TRADE_CONFIRM"
     }),
     ...mapActions({
       trade: "trades/trade"
@@ -58,6 +64,7 @@ export default {
     },
     submitTrade(){
       if(this.validTrade){
+        this.updateOverlay({loading: true})
         let amount = this.amount
         if(this.tradeType === "buy"){
           amount = this.amount * this.tradeOrder.price
@@ -78,7 +85,11 @@ export default {
         }
 
         // TODO show loading
-        this.trade(data)
+        this.trade(data).then(results => {
+          this.updateOverlay({loading: false})
+        }, error => {
+          this.updateOverlay({loading: false})
+        })
       }
     }
   },
@@ -88,6 +99,7 @@ export default {
       tradeOrder: 'trades/trade_order',
       wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
+      tradeConfirm: "components/trade_confirm",
     }),
     maxVolume(){
       let max = this.ed_wallet.current_token_balance
@@ -146,9 +158,9 @@ export default {
 
 <style lang="stylus">
 @import "../../styles/main.styl"
-
 .trade-confirm
   flex-basis 20% !important
+  position relative
 
   .header
     text-transform uppercase

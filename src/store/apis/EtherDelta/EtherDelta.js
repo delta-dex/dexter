@@ -36,7 +36,8 @@ class EtherDelta {
       })
       this.socket.on('disconnect', disconnect => {
         console.log("EtherDelta socket disconnect: ", disconnect)
-        this.socket.open()
+        this.socket = io.connect(config.socketServer[0], { transports: ['websocket'] })
+        // this.socket.open();
       })
 
     });
@@ -201,10 +202,12 @@ class EtherDelta {
             }
 
             log("dataz: ", data)
-            this.submitOrder(data).then(results=> {
+            this.submitOrder(data).then(results => {
               log(results)
+              resolve(results)
             }, error => {
               log(error)
+              reject(error)
             })
           }
         })
@@ -216,12 +219,12 @@ class EtherDelta {
     return new Promise((resolve, reject) =>{
       this.socket.emit('message', data)
       this.socket.once('messageResult', (result) => {
-        if(!result || result =="order result Failed to find existing orders."){
-          log("Order Error: ", result)
-          reject(result)
+        if(typeof result === "Array"){
+          if(result[0] == "Added/updated order."){
+            resolve(result)
+          }
         } else {
-          log("order result", result)
-          resolve(result)
+          reject(result)
         }
       })
     })

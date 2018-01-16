@@ -5,19 +5,22 @@
   .body
     .chart-container#chart-container(ref="chart_container")
 
-      
+  overlay(:visible="depthChart.loading")
 </template>
 
 <script>
 import * as d3 from 'd3'
 import moment from 'moment'
-  
-import { mapGetters, mapMutations } from 'vuex'  
+import Overlay from '@/components/Overlay'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'DepthChart',
+  components: {
+    Overlay
+  },
   data(){
     return {
-      
+
     }
   },
   props: {
@@ -28,7 +31,7 @@ export default {
     sells: {
       type: Array,
       default: () => []
-    },    
+    },
   },
   watch: {
     buys: {
@@ -50,7 +53,7 @@ export default {
       deep: true
     }
   },
-  
+
   methods: {
     initChart(){
       this.margin = {top: 5, right: 50, bottom: 5, left: 0}
@@ -61,7 +64,7 @@ export default {
         .append("svg:svg")
         .attr('width', this.width + this.margin.left + this.margin.right)
         .attr('height', this.height + this.margin.top + this.margin.bottom)
-      
+
       this.g = this.svg.append("svg:g")
 	      .attr("id","group")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -97,7 +100,7 @@ export default {
       buy_area.y0(y(0));
       sell_area.y0(y(1));
 
-      this.g.append("g")			
+      this.g.append("g")
         .attr("class", "grid")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(x)
@@ -105,8 +108,8 @@ export default {
               .tickSize(-this.height)
               .tickFormat("")
              )
-      
-      this.g.append("g")			
+
+      this.g.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(y)
               .ticks(15)
@@ -143,13 +146,13 @@ export default {
     },
     standardDeviation(values){
       var avg = this.average(values);
-        
+
       var squareDiffs = values.map(function(value){
         var diff = value - avg;
         var sqrDiff = diff * diff;
         return sqrDiff;
       });
-        
+
       var avgSquareDiff = this.average(squareDiffs);
 
       var stdDev = Math.sqrt(avgSquareDiff);
@@ -186,7 +189,7 @@ export default {
       // log("AVG!: ", avg)
       // log("MAX!: ", max)
       // log("MIN!: ", min)
-      
+
       orders = orders
         .filter(order => {
           if(type == "buy"){
@@ -235,15 +238,15 @@ export default {
           order.cum_worth = cum_worth
           return order
         })
-      
+
 
       return orders
     },
   },
   computed: {
-    ...mapGetters([
-
-    ]),
+    ...mapGetters({
+      depthChart: "components/depth_chart",
+    }),
   },
   mounted(){
     this.initChart()
@@ -258,7 +261,7 @@ export default {
 .depth-chart
   flex-basis 100%
   height 100%
-    
+  position relative
   .body
     height 100%
     overflow hidden
@@ -266,7 +269,7 @@ export default {
     .chart-container
       height 100%
       width 100%
-      
+
       svg
         shape-rendering crispedges
         height 100%
@@ -305,5 +308,5 @@ export default {
   .grid path {
     stroke-width: 0;
   }
-     
+
 </style>

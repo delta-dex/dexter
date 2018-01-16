@@ -39,10 +39,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       APIs.EtherDelta.socket.once('market', (market) => {
         log(market)
-        // The websocket sometimes doesn't return all keys on the market object, wtf
         if(market.trades){
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
+          commit("components/UPDATE_TRADE_HISTORY", {loading: false}, {root: true})
         }
         if(market.orders){
           // First parse orders
@@ -50,19 +50,25 @@ const actions = {
           let buy_orders =  APIs.EtherDelta.parseOrders(market.orders.buys, rootState.tokens.current_token)
           commit("orders/UPDATE_BUY_ORDERS", buy_orders, {root: true})
           commit("orders/UPDATE_SELL_ORDERS", sell_orders, {root: true})
+          commit("components/UPDATE_ORDER_BOOK", {loading: false}, {root: true})
+          commit("components/UPDATE_DEPTH_CHART", {loading: false}, {root: true})
         }
         if(market.myOrders){
           let user_buy_orders = market.myOrders ? market.myOrders.buys : []
           let user_sell_orders = market.myOrders ? market.myOrders.sells : []
           commit("users/UPDATE_BUY_ORDERS", user_buy_orders, {root: true})
           commit("users/UPDATE_SELL_ORDERS", user_sell_orders, {root: true})
+          commit("components/UPDATE_ORDER_HISTORY", {loading: false}, {root: true})
         }
         if(market.myTrades){
           let user_trades = market.myTrades ? market.myTrades : []
           commit("users/UPDATE_TRADES", user_trades, {root: true})
+          commit("components/UPDATE_ORDER_HISTORY", {loading: false}, {root: true})
         }
-        // Because EtherDelta cant program
-        if(!market.trades || !market.orders){
+        // The websocket sometimes doesn't return all keys on the market object, wtf
+        if(APIs.EtherDelta.w3.eth.defaultAccount && !market.trades || !market.orders || !market.myOrders || !market.myTrades){
+          reject(market)
+        } else if(!market.trades || !market.orders){
           reject(market)
         } else {
           dispatch("orders/watch_orders", {}, {root: true})

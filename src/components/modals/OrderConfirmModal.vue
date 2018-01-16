@@ -4,7 +4,7 @@
     span.trade-type CONFIRM {{orderForm.order_type.toUpperCase()}} ORDER
     i.material-icons(@click="close(null)") close
   .body
-    .form
+    .form(v-if="!response")
       .field
         .info
           span Amount to {{orderForm.order_type.toUpperCase()}} ({{token.name}})
@@ -25,22 +25,37 @@
       .field
         .button(@click="submitOrder()" :class="{'sell': orderForm.order_type === 'sell'}")
           span {{orderForm.order_type.toUpperCase()}} {{orderForm.volume}} {{token.name}} @ {{orderForm.price}} ETH
+    .confirm(v-else)
+      span.title {{order_message}}
+  overlay(:visible="orderConfirm.loading")
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import APIs from '@/store/apis'
+import Overlay from '@/components/Overlay'
 
 export default {
   name: 'OrderConfirmModal',
+  data(){
+    return {
+      response: false,
+      order_message: "Order Successfully Placed"
+    }
+  },
+  components: {
+    Overlay
+  },
   methods: {
     ...mapMutations({
-      close: "components/CLOSE_MODAL"
+      close: "components/CLOSE_MODAL",
+      updateOverlay: "components/UPDATE_ORDER_CONFIRM"
     }),
     ...mapActions({
       placeOrder: "orders/place_order",
     }),
     submitOrder(){
+      this.updateOverlay({loading: true})
       let tokenGive, tokenGet, amountGive, amountGet
 
       // Convert amounts to Wei
@@ -64,7 +79,15 @@ export default {
         expires: this.orderForm.expires,
         nonce: parseInt(1000000000 * Math.random())
       }
-      this.placeOrder(data)
+      this.placeOrder(data).then(results => {
+        this.response = true
+        this.order_message = "Order Successfully Placed!"
+        this.updateOverlay({loading: false})
+      }, error => {
+        this.response = true
+        this.order_message = "Error Placing Order: "  + error
+        this.updateOverlay({loading: false})
+      })
     }
   },
   computed: {
@@ -73,6 +96,7 @@ export default {
       token: 'tokens/current_token',
       wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
+      orderConfirm: "components/order_confirm",
     }),
     fee(){
       if(this.orderForm.order_type === 'buy'){
@@ -94,7 +118,15 @@ export default {
 @import "../../styles/main.styl"
 
 .order-confirm
+  position relative
   flex-basis 20% !important
+
+  .confirm
+    display flex
+    align-items center
+    flex-basis 100%
+    text-align center
+    justify-content center
 
   .header
     text-transform uppercase
