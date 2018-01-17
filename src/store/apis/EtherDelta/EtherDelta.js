@@ -152,12 +152,12 @@ class EtherDelta {
 
   placeOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce){
     // This places an Order off-chain
-    log("tokenGet: ", tokenGet)
-    log("amountGet: ", amountGet)
-    log("tokenGive: ", tokenGive)
-    log("amountGive: ", amountGive)
-    log("expires: ", expires)
-    log("nonce: ", nonce)
+    // log("tokenGet: ", tokenGet)
+    // log("amountGet: ", amountGet)
+    // log("tokenGive: ", tokenGive)
+    // log("amountGive: ", amountGive)
+    // log("expires: ", expires)
+    // log("nonce: ", nonce)
 
     return new Promise((resolve, reject) => {
       web3.eth.getBlockNumber((error, result)=> {
@@ -176,12 +176,10 @@ class EtherDelta {
         let hash = `0x${sha256(new Buffer(packed_data, 'hex'))}`
         let msg = this._prefixMessage(hash);
 
-        log("msg: ",  msg)
         this.w3.eth.sign(this.w3.eth.defaultAccount, msg, (error, result)=>{
           if(error){
             reject(error)
           } else {
-            log(result)
             let sig = result.substr(2, result.length)
             let r = "0x" + sig.substr(0, 64)
             let s = "0x" + sig.substr(64, 64)
@@ -201,12 +199,11 @@ class EtherDelta {
               v,
             }
 
-            log("dataz: ", data)
             this.submitOrder(data).then(results => {
-              log(results)
+              log("success: ", results)
               resolve(results)
             }, error => {
-              log(error)
+              log("error: ", error)
               reject(error)
             })
           }
@@ -219,7 +216,7 @@ class EtherDelta {
     return new Promise((resolve, reject) =>{
       this.socket.emit('message', data)
       this.socket.once('messageResult', (result) => {
-        if(typeof result === "Array"){
+        if(Array.isArray(result)){
           if(result[0] == "Added/updated order."){
             resolve(result)
           }
