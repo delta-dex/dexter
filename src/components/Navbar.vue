@@ -1,7 +1,10 @@
 <template lang="pug">
 #navbar
   .left
-    router-link.brand(:to="{name: 'exchange'}" tag="span") {{navbar.brand}}
+    router-link.brand(:to="{name: 'exchange'}" tag="span")
+      span.delta Delta
+      span.hyph -
+      span.dax DAX
     .break
     .token-select
       // img(src="https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png")
@@ -107,12 +110,26 @@ export default {
     align-items center
 
     .brand
-      font-family 'Cinzel', serif !important
       font-size 36px
-      color  rgba(44,53,57, 1)
       font-weight bold
       margin-right 20px
+      display flex
+      align-items center
 
+      .delta
+        color #0067CD
+        font-size 30px
+        font-family 'Open Sans', sans-serif
+        font-weight 600
+      .hyph
+        color $color-text-invert
+        margin-right 4px
+        margin-left 4px
+      .dax
+        color rgba(30, 43, 52, 0.83)
+        font-size 30px
+        font-family 'Russo One', sans-serif
+        height 29px
     .break
       border-radius 3px
       width 1px
