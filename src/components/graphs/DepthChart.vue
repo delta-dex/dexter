@@ -167,6 +167,7 @@ export default {
       return avg;
     },
     formatData(orders, type){
+      // log("orders: ", orders)
       let prices = orders.map(order => {return (order.price)})
       let max = prices.reduce(function(a, b) {
         return Math.max(a, b);
@@ -239,7 +240,7 @@ export default {
           return order
         })
 
-
+      // log("formatted orders: ", orders)
       return orders
     },
   },

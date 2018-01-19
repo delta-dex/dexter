@@ -1,4 +1,4 @@
-import Vue from 'vue'
+ import Vue from 'vue'
 import APIs from './apis'
 
 // State
@@ -44,10 +44,12 @@ const actions = {
     })
   },
   trade: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount}) => {
-    APIs.EtherDelta.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount).then(result => {
+    return APIs.EtherDelta.trade(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount).then(result => {
       log("result ", result)
-    }).catch(error => {
+      return result
+    }, error => {
       log("error ", error)
+      throw error
     })
   },
 }

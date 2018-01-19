@@ -4,7 +4,7 @@
     span.trade-type CONFIRM {{tradeType}}
     i.material-icons(@click="close(null)") close
   .body
-    .form
+    .form(v-if="!trade_message")
       .field
         .info
           span Amount to {{tradeType}} ({{token.name}})
@@ -26,6 +26,13 @@
       .field
         .button(@click="submitTrade()" :class="{'sell': tradeType === 'sell'}")
           span {{tradeType}} {{amount}} {{token.name}} @ {{tradeOrder.price}} ETH
+    .confirm(v-else)
+      .success(v-if="trade_successful")
+        span.title Successfully created transaction!
+        a.txn(:href="'https://www.etherscan.io/tx/' + trade_message" target="_blank") {{trade_message}}
+      .error(v-else)
+        span.title Error creating transaction:
+        span.error-message {{trade_message}}
   overlay(:visible="tradeConfirm.loading")
 </template>
 
@@ -41,7 +48,9 @@ export default {
   },
   data(){
     return {
-      amount: 0
+      amount: 0,
+      trade_successful: null,
+      trade_message: "",
     }
   },
   methods: {
@@ -56,7 +65,7 @@ export default {
       let max = this.tradeOrder.ethAvailableVolume
 
       if(max > parseFloat(this.ed_wallet.current_token_balance)){
-        log("?????")
+        log("TODO")
         max = this.ed_wallet.current_token_balance
       }
       log(max)
@@ -87,7 +96,14 @@ export default {
         // TODO show loading
         this.trade(data).then(results => {
           this.updateOverlay({loading: false})
+          this.trade_message = results
+          this.trade_successful = true
+          this.updateOverlay({loading: false})
+          log("results: ", results)
         }, error => {
+          log("error: ", results)
+          this.trade_successful = false
+          this.trade_message = results
           this.updateOverlay({loading: false})
         })
       }
@@ -216,4 +232,20 @@ export default {
           &.sell
             background-color $color-red
 
+  .confirm
+    .success
+      display flex
+      flex-wrap wrap
+      flex-basis 100%
+      .txn
+        color $color-yellow
+        font-family 'Open Sans', sans-serif
+
+    .error
+      display flex
+      flex-wrap wrap
+      flex-basis 100%
+
+    .title
+      flex-basis 100%
 </style>
