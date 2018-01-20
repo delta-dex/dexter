@@ -101,9 +101,13 @@ export default {
           this.updateOverlay({loading: false})
           log("results: ", results)
         }, error => {
-          log("error: ", results)
+          log("error: ", error)
           this.trade_successful = false
-          this.trade_message = results
+          if(error.message){
+            this.trade_message = error.message
+          } else {
+            this.trade_message = error
+          }
           this.updateOverlay({loading: false})
         })
       }

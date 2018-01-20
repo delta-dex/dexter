@@ -71,8 +71,13 @@ const actions = {
         } else if(!market.trades || !market.orders){
           reject(market)
         } else {
+          // Watch everything
           dispatch("orders/watch_orders", {}, {root: true})
           dispatch("trades/watch_trades", {}, {root: true})
+          dispatch("users/watch_my_trades", {}, {root: true})
+          dispatch("users/watch_my_orders", {}, {root: true})
+
+          // Update wallets
           dispatch("users/update_ed_wallet", {}, {root: true})
           dispatch("users/update_current_wallet", {}, {root: true})
           resolve(market)

@@ -72,13 +72,21 @@ var mutations = {
   ["UPDATE_TRADES"] (state, trades) {
     state.trades = trades
   },
+  ["ADD_TRADES"] (state, trades) {
+    state.trades = trades.concat(state.trades)
+  },
   ["UPDATE_BUY_ORDERS"] (state, orders) {
     state.buy_orders = orders
   },
   ["UPDATE_SELL_ORDERS"] (state, orders) {
     state.sell_orders = orders
   },
-
+  ["ADD_BUY_ORDERS"] (state, orders) {
+    state.buy_orders = orders.concat(state.buy_orders)
+  },
+  ["ADD_SELL_ORDERS"] (state, orders) {
+    state.sell_orders = orders.concat(state.sell_orders)
+  },
 }
 
 // Actions
@@ -104,6 +112,23 @@ var actions = {
       commit("UPDATE_CURRENT_WALLET", wallet)
     }
   },
+  watch_my_trades: ({dispatch, commit, state, rootState}) => {
+    APIs.EtherDelta.socket.on('myTrades', (trades) => {
+      log("NEW Trades: ", trades)
+      trades = APIs.EtherDelta.parseTrades(trades, rootState.tokens.current_token)
+      commit("ADD_TRADES", trades)
+    })
+  },
+  watch_my_orders: ({dispatch, commit, state, rootState}) => {
+    APIs.EtherDelta.socket.on('myOrders', (orders) => {
+      log("NEW ORDER: ", orders)
+      let sell_orders = APIs.EtherDelta.parseOrders(orders.sells, rootState.tokens.current_token)
+      let buy_orders =  APIs.EtherDelta.parseOrders(orders.buys, rootState.tokens.current_token)
+      commit("ADD_BUY_ORDERS", sell_orders)
+      commit("ADD_SELL_ORDERS", buy_orders)
+    })
+  },
+
   update_ed_wallet: ({ commit, state, rootState }) => {
     if(state.ed_wallet.address && rootState.tokens.current_token.addr){
       let wallet = Object.assign({}, state.ed_wallet)
