@@ -55,7 +55,7 @@ export default {
         hour12: false,
       }),
       agg: .01,
-      limit: 20
+      limit: 30
     }
   },
   props: {

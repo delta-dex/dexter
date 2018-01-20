@@ -45,5 +45,4 @@ $navbar-height = 50px
     flex-basis 100%
     height calc(100vh - 50px)
 
-
 </style>

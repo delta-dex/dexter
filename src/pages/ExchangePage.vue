@@ -6,10 +6,15 @@
 
   .orders-container
     order-book(:buys="buy_orders", :sells="sell_orders")
-    order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
 
-  .chart-container
+
+  .depth-chart-container
     depth-chart(:buys="buy_orders", :sells="sell_orders")
+
+  .price-chart-container
+    .price-chart
+      span price chart
+      order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
 
   .trade-history-container
     trade-history(:trades="trades")
@@ -151,21 +156,24 @@ export default {
     flex-basis 15%
 
   .orders-container
-    flex-basis 35%
+    flex-basis 20%
     flex-wrap wrap
 
-    .order-book
-      height 70% !important
+    // .order-book
+    //   height 70% !important
 
-    .order-history
-      height 30% !important
+    // .order-history
+    //   height 30% !important
 
-  .chart-container
-    flex-basis 25%
+  .depth-chart-container
+    flex-basis 15%
+
+  .price-chart-container
+    flex-basis 35%
 
   .trade-history-container
     margin-left auto
-    flex-basis 25%
+    flex-basis 15%
 
 
 </style>

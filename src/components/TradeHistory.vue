@@ -104,7 +104,7 @@ export default {
   .body
     display flex
     flex-wrap wrap
-    overflow scroll
+    overflow hidden
     height 100%
 
     .trade-list-header
