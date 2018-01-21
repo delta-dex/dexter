@@ -20,6 +20,9 @@ const state = {
   order_confirm: {
     loading: false
   },
+  donate_modal: {
+    loading: false
+  },
   depth_chart: {
     loading: true
   },
@@ -50,6 +53,7 @@ var getters = {
   order_history: (state) => state.order_history,
   order_confirm: (state) => state.order_confirm,
   depth_chart: (state) => state.depth_chart,
+  donate_modal: (state) => state.donate_modal,
   price_chart: (state) => state.price_chart,
   trade_history: (state) => state.trade_history,
   trade_confirm: (state) => state.trade_confirm,

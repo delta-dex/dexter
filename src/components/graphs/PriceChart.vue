@@ -145,7 +145,9 @@ export default {
 
       let t = d3.event.transform
       let xt = t.rescaleX(this.x)
+      let yt = t.rescaleY(this.y)
       this.g.select(".line").attr("d", this.priceLine.x(trade => { return xt(trade.date) }))
+      this.g.select(".line").attr("d", this.priceLine.y(trade => { return yt(trade.price) }))
 
     },
     reset(){
@@ -154,7 +156,14 @@ export default {
         .call(this.zoom.transform, d3.zoomIdentity)
     },
     formatData(trades){
-      return trades.map(trade => {
+      let lastTrade = trades[trades.length - 1]
+      return trades.filter(trade => {
+        if((trade.price * 10) < lastTrade.price || (trade.price / 10) > lastTrade.price){
+          return false
+        } else {
+          return true
+        }
+      }).map(trade => {
         return {
           volume: trade.amount,
           price: trade.price,

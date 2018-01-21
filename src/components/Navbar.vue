@@ -17,9 +17,13 @@
     .price-container(v-if="trades && trades.length")
       span.price {{trades[0].price}}
   .center
-  .right
     .current-address
       span.address {{address}}
+
+  .right
+    .donate.button(@click="openDonateModal()") Donate
+    //- .current-address
+    //-   span.address {{address}}
     //- router-link(:to="{name: 'portfolio', params: {address: address}}")
     //-   i.material-icons pie_chart
 </template>
@@ -47,6 +51,9 @@ export default {
     ...mapActions({
       initCurrentMarket: 'markets/init_current_market',
     }),
+    openDonateModal(){
+      this.openModal("DonateModal")
+    },
     onFilterChange(e){
       this.updateTokenFilter(e.target.value)
     },
@@ -197,20 +204,32 @@ export default {
 
   .center
     flex-grow 1
+    .current-address
+      margin-right 1em
+      text-align center
+      span
+        color $color-text-invert
+        font-weight 400
 
   .right
     flex-basis 25%
     margin-left auto
     margin-right 1em
     display flex
-    align-items center
+    align-items right
+    text-align right
 
-    .current-address
-      margin-right 1em
+    .donate
+      margin-left auto
+      font-family 'Open Sans', sans-serif
+      font-size 20px
+      font-weight 400
+      color $color-text-invert
+      border 1px solid $color-background
+      padding 0px 10px
 
-      span
-        color $color-text-invert
-        font-weight 400
+      &:hover
+        background lighten($color-background, 80%)
 
     i
       color $color-text-invert

@@ -21,6 +21,8 @@
             span.price {{priceFormat(order.price)}}
           .info.time-container
             span.time {{timeFormat(order.date)}}
+      .empty(v-if="orders.length == 0")
+        span No recent orders
   overlay(:visible="orderHistory.loading")
 </template>
 
@@ -168,6 +170,14 @@ export default {
       height 100%
       overflow scroll
 
+      .empty
+        display flex
+        flex-basis 100%
+        align-items center
+        justify-content center
+        margin-top 2em
+        span
+          font-size 16px
       .order-container
         display flex
         flex-basis 100%
