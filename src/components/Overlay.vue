@@ -31,7 +31,7 @@ export default {
 <style lang="stylus">
 .overlay
   z-index 9
-  background-color rgba(0, 0, 0, .4)
+  background-color rgba(0, 0, 0, .2)
   height 100%
   width 100%
   top 0px

@@ -2,6 +2,11 @@
 .price-chart.component
   .header
     span PRICE CHART
+
+    .left
+      .option-container
+        span(@click="reset()") RESET
+
   .body
     .chart-container#price-chart-container(ref="price_chart_container")
 
@@ -43,7 +48,7 @@ export default {
 
   methods: {
     initChart(){
-      this.margin = {top: 10, right: 5, bottom: 70, left: 50}
+      this.margin = {top: 10, right: 20, bottom: 70, left: 50}
       this.width = this.$refs.price_chart_container.clientWidth - this.margin.left - this.margin.right
       this.height = this.$refs.price_chart_container.clientHeight - this.margin.top - this.margin.bottom
 
@@ -58,85 +63,97 @@ export default {
     },
 
     draw(trade_data){
-      log("trade_data: ", trade_data)
+      // log("trade_data: ", trade_data)
       d3.select("#price-chart-group").selectAll("*").remove()
 
       // START
       // set the ranges
+      this.zoom = d3.zoom()
+        .scaleExtent([1, 40])
+        .translateExtent([[-100, -100], [this.width + 90, this.height + 100]])
+        .on("zoom", this.zoomed);
+
       this.x = d3.scaleTime().range([0, this.width]);
       this.y = d3.scaleLinear().range([this.height, 0]);
 
       // define the line
       this.priceLine = d3.line()
-          .x(trade => { return this.x(trade.date) })
-          .y(trade => { return this.y(trade.price) })
+        .curve(d3.curveStep)
+        .x(trade => { return this.x(trade.date) })
+        .y(trade => { return this.y(trade.price) })
 
       this.x.domain(d3.extent(trade_data, trade => { return trade.date }))
       this.y.domain([0, d3.max(trade_data, trade => { return trade.price })])
 
+      this.xAxis = d3.axisBottom(this.x)
+      this.yAxis = d3.axisLeft(this.y)
+
+      this.gridXAxis = d3.axisBottom(this.x)
+      this.gridYAxis = d3.axisLeft(this.y)
+
+
       // Add the valueline path.
-      this.g.append("path")
+      this.priceLinePath = this.g.append("path")
         .data([trade_data])
         .attr("class", "line")
         .attr("d", this.priceLine);
 
       // Add the X Axis
-      this.g.append("g")
+      this.gX = this.g.append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.x))
+        .call(this.xAxis)
 
       // Add the Y Axis
-      this.g.append("g")
-        .call(d3.axisLeft(this.y))
+      this.gY = this.g.append("g")
+        .call(this.yAxis)
 
-
-      this.g.append("g")
+      // Add the grid
+      this.gridX = this.g.append("g")
         .attr("class", "grid")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.x)
+        .call(this.gridXAxis
               .ticks(5)
               .tickSize(-this.height)
               .tickFormat("")
              )
 
-      this.g.append("g")
+      this.gridY = this.g.append("g")
         .attr("class", "grid")
-        .call(d3.axisLeft(this.y)
+        .call(this.gridYAxis
               .ticks(15)
               .tickSize(-this.width)
               .tickFormat("")
              )
 
-      // Buy Area
-      // this.g.append("path")
-      //   .datum(buy_data)
-      //   .attr("class", "buy-area")
-      //   .attr("d", buy_area);
+      this.view = this.g.append("rect")
+        .attr("class", "view")
+        .attr("x", 0.5)
+        .attr("y", 0.5)
+        .attr("width", this.width - 1)
+        .attr("height", this.height - 1)
 
-      // Sell Area
-      // this.g.append("path")
-      //   .datum(sell_data)
-      //   .attr("class", "sell-area")
-      //   .attr("d", sell_area);
-
-      // this.g.append("g")
-      //    // .attr("transform", "translate(0," + this.height + ")")
-      //   .attr("class", "axis")
-      //   .call(d3.axisBottom(x)
-      //         .ticks(5)
-      //        )
-
-      // this.g.append("g")
-      //   .attr("transform", "translate(" + this.width + ", 0)")
-      //   .attr("class", "axis")
-      //   .call(d3.axisRight(y)
-      //         .ticks(15)
-      //        )
-
+      this.g.call(this.zoom)
     },
 
+    zoomed() {
+      this.view.attr("transform", d3.event.transform);
+      this.gX.call(this.xAxis.scale(d3.event.transform.rescaleX(this.x)))
+      this.gY.call(this.yAxis.scale(d3.event.transform.rescaleY(this.y)))
+
+      this.gridX.call(this.gridXAxis.scale(d3.event.transform.rescaleX(this.x)))
+      this.gridY.call(this.gridYAxis.scale(d3.event.transform.rescaleY(this.y)))
+
+      let t = d3.event.transform
+      let xt = t.rescaleX(this.x)
+      this.g.select(".line").attr("d", this.priceLine.x(trade => { return xt(trade.date) }))
+
+    },
+    reset(){
+      this.g.transition()
+        .duration(750)
+        .call(this.zoom.transform, d3.zoomIdentity)
+    },
     formatData(trades){
-      log("trades: " ,trades)
       return trades.map(trade => {
         return {
           volume: trade.amount,
@@ -167,6 +184,27 @@ export default {
   flex-basis 100%
   height 100%
   position relative
+
+  .left
+    display flex
+    margin-left auto
+
+    .option-container
+      display flex
+      align-items center
+      margin-left 20px
+      span
+        font-size 11px
+        font-weight 700
+        color $color-text
+        margin-right 10px
+        border 1px solid $color-component-background
+        padding 5px 10px
+        cursor pointer
+
+        &:hover
+          background $color-component-background
+
   .body
     height 100%
     overflow hidden
@@ -207,6 +245,15 @@ export default {
 
   .grid path {
     stroke-width: 0;
+  }
+
+  .view {
+    fill: url(#gradient);
+    stroke: rgba(0, 0, 0, 0)
+  }
+
+  .axis path {
+    display: none;
   }
 
 </style>
