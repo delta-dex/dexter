@@ -69,6 +69,9 @@ var mutations = {
   ["UPDATE_WALLETS"] (state, wallets) {
     state.wallets = wallets
   },
+  ["UPDATE_CURRENT_ADDRESS"] (state, wallet) {
+    state.address = APIs.EtherDelta.w3.eth.defaultAccount
+  },
   ["UPDATE_TRADES"] (state, trades) {
     state.trades = trades
   },
@@ -96,7 +99,7 @@ var actions = {
     localStorage.setItem("user", user)
   },
   update_current_wallet: ({ commit, state, rootState }) => {
-    if(state.current_wallet.address && rootState.tokens.current_token.addr){
+    if(state.address && rootState.tokens.current_token.addr){
       let wallet = Object.assign({}, state.current_wallet)
       let address = APIs.EtherDelta.w3.eth.defaultAccount
       // Get ETH Balance
@@ -128,9 +131,8 @@ var actions = {
       commit("ADD_SELL_ORDERS", buy_orders)
     })
   },
-
   update_ed_wallet: ({ commit, state, rootState }) => {
-    if(state.ed_wallet.address && rootState.tokens.current_token.addr){
+    if(state.address && rootState.tokens.current_token.addr){
       let wallet = Object.assign({}, state.ed_wallet)
       let address = APIs.EtherDelta.w3.eth.defaultAccount
       // Get ETH Balance in EtherDelta

@@ -5,7 +5,7 @@
     i.material-icons(@click="close(null)") close
 
   .body
-    .form
+    .form(v-if="!deposited && !error")
       .eth.balance-row
         .left
           span.currency ETH
@@ -22,19 +22,36 @@
         .right
           .button(@click="depositToken()")  DEPOSIT
 
+    .deposited(v-else)
+      .success(v-if="!error")
+        span.title Successfully created transaction!
+        a.txn(:href="'https://www.etherscan.io/tx/' + txn" target="_blank") {{txn}}
+      .error(v-else)
+        p Error:
+        p {{error_message}}
 
+  overlay(:visible="loading")
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import APIs from '@/store/apis'
+import Overlay from '@/components/Overlay'
 
 export default {
   name: 'DepositModal',
+  components: {
+    Overlay
+  },
   data(){
     return {
       eth_amount: 0.00,
-      token_amount: 0.00
+      token_amount: 0.00,
+      deposited: false,
+      txn: null,
+      loading: false,
+      error: false,
+      error_message: null
     }
   },
   methods: {
@@ -42,21 +59,38 @@ export default {
       close: "components/CLOSE_MODAL"
     }),
     depositEth(){
+      this.loading = true
       APIs.EtherDelta.depositEth(this.eth_amount).then(result => {
+        this.loading = false
+        this.deposited = true
+        this.txn = result
         log("result: ", result)
       }).catch(error => {
+        this.loading = false
+        this.error= true
+        this.error_message = error.message
         log("error: ", error)
       })
     },
     depositToken(){
+      this.loading = true
       APIs.EtherDelta.approve(this.token.addr, this.token_amount).then(result => {
         log("approve result: ", result)
         APIs.EtherDelta.depositToken(this.token.addr, this.token_amount).then(result => {
+          this.loading = false
+          this.deposited = true
+          this.txn = result
           log("depositToken result: ", result)
         }).catch(error => {
+          this.loading = false
+          this.error= true
+          this.error_message = error.message
           log("error: ", error)
         })
       }).catch(error => {
+        this.loading = false
+        this.error= true
+        this.error_message = error.message
         log("error: ", error)
       })
     }
@@ -76,7 +110,7 @@ export default {
 
 
 <style lang="stylus">
-
+@import "../../styles/main.styl"
 .deposit
   flex-basis 30% !important
   .body
@@ -123,5 +157,17 @@ export default {
             height 32px
             padding 0px
 
+  .success
+    display flex
+    flex-wrap wrap
+    flex-basis 100%
+    .txn
+      color $color-yellow
+      font-family 'Open Sans', sans-serif
+
+  .error
+    display flex
+    flex-wrap wrap
+    flex-basis 100%
 
 </style>

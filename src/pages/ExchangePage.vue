@@ -72,6 +72,7 @@ export default {
       closeModal: "components/CLOSE_MODAL",
       updateCurrentToken: "tokens/UPDATE_CURRENT_TOKEN",
       updateTokenFilter: "tokens/UPDATE_TOKEN_FILTER",
+      updateCurrentAddress: 'users/UPDATE_CURRENT_ADDRESS',
     }),
     initMarket(trys=0){
       // log("trys: ", trys)
@@ -105,8 +106,15 @@ export default {
       setInterval(()=> {
         this.updateCurrentWallet()
         this.updateEdWallet()
-      }, 5000)
+      }, 1000)
     },
+    watchCurrentAddress(){
+      this.updateCurrentAddress()
+      setInterval(()=> {
+        this.updateCurrentAddress()
+      }, 1000)
+    },
+
   },
   watch: {
     trades: function(){
@@ -134,8 +142,12 @@ export default {
       this.initMarket()
     })
 
-    // Update wallets, and then update again every 5 seconds
+    // Update wallets, and then update again every second
     this.watchWallets()
+
+    // Update current MetaMask address
+    this.watchCurrentAddress()
+
   },
   mounted(){
 
