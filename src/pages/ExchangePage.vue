@@ -7,14 +7,12 @@
   .orders-container
     order-book(:buys="buy_orders", :sells="sell_orders")
 
-
   .depth-chart-container
     depth-chart(:buys="buy_orders", :sells="sell_orders")
 
   .price-chart-container
-    .price-chart
-      span price chart
-      order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
+    price-chart(:trades="trades")
+    order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
 
   .trade-history-container
     trade-history(:trades="trades")
@@ -29,6 +27,7 @@ import OrderHistory from "@/components/OrderHistory"
 import OrderBook from "@/components/OrderBook"
 import OrderForm from "@/components/OrderForm"
 import DepthChart from "@/components/graphs/DepthChart"
+import PriceChart from "@/components/graphs/PriceChart"
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 import APIs from '../store/apis'
@@ -36,12 +35,13 @@ import APIs from '../store/apis'
 export default {
   name: 'ExchangePage',
   components: {
-    TradeHistory,
+    Balance,
+    OrderForm,
     OrderHistory,
     OrderBook,
-    OrderForm,
     DepthChart,
-    Balance,
+    PriceChart,
+    TradeHistory,
   },
   computed: {
     ...mapGetters({
@@ -156,21 +156,21 @@ export default {
     flex-basis 15%
 
   .orders-container
-    flex-basis 20%
-    flex-wrap wrap
+    flex-basis 17%
 
     // .order-book
     //   height 70% !important
 
-    // .order-history
-    //   height 30% !important
 
   .depth-chart-container
-    flex-basis 15%
+    flex-basis 18%
 
   .price-chart-container
     flex-basis 35%
-
+    .price-chart
+      height 70% !important
+    .order-history
+      height 30% !important
   .trade-history-container
     margin-left auto
     flex-basis 15%

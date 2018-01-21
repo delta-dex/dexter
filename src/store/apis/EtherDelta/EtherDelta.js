@@ -23,6 +23,12 @@ class EtherDelta {
 
     this.ed_abi = ABIEtherDelta
     this.token_abi = ABIToken
+    this.dateFormatter = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    })
   }
 
   initSocket(){
@@ -369,6 +375,7 @@ class EtherDelta {
     }).map(trade => {
       trade.amount = Math.abs(parseFloat(trade.amount))
       trade.price = Math.abs(parseFloat(trade.price))
+      trade.date = this.dateFormatter.format(new Date(trade.date))
       return trade
     })
   }

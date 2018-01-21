@@ -52,6 +52,7 @@ const actions = {
           commit("orders/UPDATE_SELL_ORDERS", sell_orders, {root: true})
           commit("components/UPDATE_ORDER_BOOK", {loading: false}, {root: true})
           commit("components/UPDATE_DEPTH_CHART", {loading: false}, {root: true})
+          commit("components/UPDATE_PRICE_CHART", {loading: false}, {root: true})
         }
         if(market.myOrders){
           let user_buy_orders = market.myOrders ? market.myOrders.buys : []

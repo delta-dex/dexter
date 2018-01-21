@@ -23,6 +23,9 @@ const state = {
   depth_chart: {
     loading: true
   },
+  price_chart: {
+    loading: true
+  },
   trade_history: {
     loading: true
   },
@@ -47,6 +50,7 @@ var getters = {
   order_history: (state) => state.order_history,
   order_confirm: (state) => state.order_confirm,
   depth_chart: (state) => state.depth_chart,
+  price_chart: (state) => state.price_chart,
   trade_history: (state) => state.trade_history,
   trade_confirm: (state) => state.trade_confirm,
   modal_loader: (state) => state.modal_loader,
@@ -75,6 +79,9 @@ var mutations = {
   },
   ["UPDATE_DEPTH_CHART"] (state, depth_chart) {
     state.depth_chart = depth_chart
+  },
+  ["UPDATE_PRICE_CHART"] (state, price_chart) {
+    state.price_chart = price_chart
   },
   ["UPDATE_TRADE_CONFIRM"] (state, trade_confirm) {
     state.trade_confirm = trade_confirm

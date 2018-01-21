@@ -11,11 +11,11 @@
       .trade-container(v-for='trade in trades')
         .trade(:class="{'buy': trade.side == 'buy', 'sell': trade.side == 'sell' }" @click="goToTx(trade.txHash)")
           .info.volume-container(:style="tradeStyle(trade)")
-            span.volume {{parseFloat(trade.amount).toFixed(3)}}
+            span.volume {{trade.amount.toFixed(3)}}
           .info.price-container
-            span.price {{priceFormat(trade.price)}}
+            span.price {{trade.price.toFixed(10)}}
           .info.time-container
-            span.time {{timeFormat(trade.date)}}
+            span.time {{trade.date}}
 
   overlay(:visible="tradeHistory.loading")
 </template>
@@ -29,16 +29,6 @@ export default {
   components: {
     Overlay
   },
-  data(){
-    return {
-      dateFormatter: new Intl.DateTimeFormat('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: false,
-      })
-    }
-  },
   props: {
     trades: {
       type: Array,
@@ -46,16 +36,6 @@ export default {
     }
   },
   methods: {
-    volumeFormat(volume){
-      return parseFloat(volume).toFixed(10)
-    },
-    priceFormat(price){
-      return parseFloat(price).toFixed(10)
-    },
-    timeFormat(dateString){
-      let d = new Date(dateString)
-      return this.dateFormatter.format(d)
-    },
     goToTx(tx){
       window.open('https://etherscan.io/tx/' + tx)
     },
