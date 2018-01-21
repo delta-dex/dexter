@@ -92,6 +92,7 @@ var mutations = {
   ["SHOW_ALL_LOADING"] (state) {
     let loading = {loading: true}
     state.depth_chart = loading
+    state.price_chart = loading
     state.order_history = loading
     state.trade_history = loading
     state.order_book = loading

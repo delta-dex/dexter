@@ -15,7 +15,7 @@
           .info.price-container
             span.price {{trade.price.toFixed(10)}}
           .info.time-container
-            span.time {{trade.date}}
+            span.time {{trade.formatted_date}}
 
   overlay(:visible="tradeHistory.loading")
 </template>

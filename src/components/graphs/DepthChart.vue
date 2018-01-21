@@ -3,7 +3,7 @@
   .header
     span DEPTH CHART
   .body
-    .chart-container#chart-container(ref="chart_container")
+    .chart-container#depth-chart-container(ref="depth_chart_container")
 
   overlay(:visible="depthChart.loading")
 </template>
@@ -57,16 +57,16 @@ export default {
   methods: {
     initChart(){
       this.margin = {top: 5, right: 50, bottom: 5, left: 0}
-      this.width = this.$refs.chart_container.clientWidth - this.margin.left - this.margin.right
-      this.height = this.$refs.chart_container.clientHeight - this.margin.top - this.margin.bottom
+      this.width = this.$refs.depth_chart_container.clientWidth - this.margin.left - this.margin.right
+      this.height = this.$refs.depth_chart_container.clientHeight - this.margin.top - this.margin.bottom
 
-      this.svg = d3.select('#chart-container')
+      this.svg = d3.select('#depth-chart-container')
         .append("svg:svg")
         .attr('width', this.width + this.margin.left + this.margin.right)
         .attr('height', this.height + this.margin.top + this.margin.bottom)
 
       this.g = this.svg.append("svg:g")
-	      .attr("id","group")
+	      .attr("id","depth-chart-group")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     },
     draw(buy_data, sell_data){
@@ -75,7 +75,7 @@ export default {
       // log("sell_data: ", sell_data)
       // log("all_data: ", all_data)
 
-      d3.select("#group").selectAll("*").remove()
+      d3.select("#depth-chart-group").selectAll("*").remove()
 
       // START
       var x = d3.scaleLinear()

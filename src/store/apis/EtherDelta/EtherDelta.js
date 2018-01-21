@@ -375,7 +375,8 @@ class EtherDelta {
     }).map(trade => {
       trade.amount = Math.abs(parseFloat(trade.amount))
       trade.price = Math.abs(parseFloat(trade.price))
-      trade.date = this.dateFormatter.format(new Date(trade.date))
+      trade.date = new Date(trade.date)
+      trade.formatted_date = this.dateFormatter.format(new Date(trade.date))
       return trade
     })
   }

@@ -43,6 +43,7 @@ const actions = {
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
           commit("components/UPDATE_TRADE_HISTORY", {loading: false}, {root: true})
+          commit("components/UPDATE_PRICE_CHART", {loading: false}, {root: true})
         }
         if(market.orders){
           // First parse orders
@@ -52,7 +53,6 @@ const actions = {
           commit("orders/UPDATE_SELL_ORDERS", sell_orders, {root: true})
           commit("components/UPDATE_ORDER_BOOK", {loading: false}, {root: true})
           commit("components/UPDATE_DEPTH_CHART", {loading: false}, {root: true})
-          commit("components/UPDATE_PRICE_CHART", {loading: false}, {root: true})
         }
         if(market.myOrders){
           let user_buy_orders = market.myOrders ? market.myOrders.buys : []
