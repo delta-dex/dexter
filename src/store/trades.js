@@ -38,9 +38,10 @@ const mutations = {
 
 // Actions
 const actions = {
-  watch_trades: ({commit, state}) => {
+  watch_trades: ({commit, state, rootState}) => {
     APIs.EtherDelta.socket.on('trades', (trades) => {
-      commit("ADD_TRADES", trades)
+      let parsed_trades = APIs.EtherDelta.parseTrades(trades, rootState.tokens.current_token)
+      commit("ADD_TRADES", parsed_trades, )
     })
   },
   trade: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, user, v, r, s, amount}) => {

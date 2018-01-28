@@ -24,7 +24,7 @@
           .info.price-container
             span.price {{priceFormat(order.price)}}
           .info.time-container
-            span.time {{timeFormat(order.updated)}}
+            span.time {{order.formatted_date}}
       .order-container(v-for='order in agg_buys')
         .order.buy(@click="onOrderSelected(order)")
           .info.volume-container(:style="volumePercentStyle(order, 'buy')")
@@ -32,7 +32,7 @@
           .info.price-container
             span.price {{priceFormat(order.price)}}
           .info.time-container
-            span.time {{timeFormat(order.updated)}}
+            span.time {{order.formatted_date}}
   overlay(:visible="orderBook.loading")
 </template>
 

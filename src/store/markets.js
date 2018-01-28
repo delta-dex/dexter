@@ -57,6 +57,8 @@ const actions = {
         if(market.myOrders){
           let user_buy_orders = market.myOrders ? market.myOrders.buys : []
           let user_sell_orders = market.myOrders ? market.myOrders.sells : []
+          user_buy_orders = APIs.EtherDelta.parseOrders(user_buy_orders, rootState.tokens.current_token)
+          user_sell_orders = APIs.EtherDelta.parseOrders(user_sell_orders, rootState.tokens.current_token)
           commit("users/UPDATE_BUY_ORDERS", user_buy_orders, {root: true})
           commit("users/UPDATE_SELL_ORDERS", user_sell_orders, {root: true})
           commit("components/UPDATE_ORDER_HISTORY", {loading: false}, {root: true})

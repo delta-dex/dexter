@@ -12,7 +12,7 @@
 
   .price-chart-container
     price-chart(:trades="trades")
-    order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :filled_buys="user_filled_buys", :filled_sells="user_filled_sells")
+    order-history(:open_buys="user_buy_orders", :open_sells="user_sell_orders", :trades="recent_trades")
 
   .trade-history-container
     trade-history(:trades="trades")
@@ -50,8 +50,7 @@ export default {
       sell_orders: 'orders/sell_orders',
       current_wallet: 'users/current_wallet',
       ed_wallet: 'users/ed_wallet',
-      user_filled_buys: 'users/filled_buys',
-      user_filled_sells: 'users/filled_sells',
+      recent_trades: 'users/trades',
       user_sell_orders: 'users/sell_orders',
       user_buy_orders: 'users/buy_orders',
       tokens: 'tokens/tokens',

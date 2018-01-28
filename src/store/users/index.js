@@ -16,6 +16,7 @@ const state = {
     current_token_balance: 0.0
   },
   trades: [],
+  orders: [],
   buy_orders: [],
   sell_orders: [],
   tokens: [],
@@ -50,6 +51,9 @@ var getters = {
   },
   buy_orders: state => state.buy_orders,
   sell_orders: state => state.sell_orders,
+  orders: (state) => {
+    return state.buy_orders.concat(state.sell_orders)
+  },
 }
 
 // Mutations

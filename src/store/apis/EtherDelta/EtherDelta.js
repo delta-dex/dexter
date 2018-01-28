@@ -234,9 +234,7 @@ class EtherDelta {
   }
 
   cancelOrder(tokenGive, tokenGet, amountGive, amountGet, expires, nonce){
-    amountGive = this.w3.toWei(amountGive, 'ether')
-    amountGet = this.w3.toWei(amountGet, 'ether')
-    this.contract.cancelOrder(tokenGive, tokenGet, amountGive, amountGet, expires, nonce, function(error, result){
+    this.contract.cancelOrder(tokenGet,  amountGet, tokenGive, amountGive, expires, nonce, v, r, s, function(error, result){
       if(!error){
         resolve(result)
       } else {
@@ -380,13 +378,18 @@ class EtherDelta {
       }
     }).map(order => {
       order.amount = Math.abs(parseFloat(order.amount) / Math.pow(10, currentToken.decimals))
+      if(order.amountFilled == null){
+        order.amountFilled = 0
+      }
+      order.amountFilled = Math.abs(parseFloat(order.amountFilled) / Math.pow(10, currentToken.decimals))
       order.price = Math.abs(parseFloat(order.price))
+      order.formatted_date = this.dateFormatter.format(new Date(order.updated))
       return order
     })
   }
   parseTrades(trades, currentToken){
     return trades.filter(trade => {
-      if(trade.tokenAddr === currentToken.addr || trade.tokenAddr === currentToken.addr){
+      if(trade.tokenAddr === currentToken.addr){
         return true
       } else {
         return false
@@ -399,7 +402,6 @@ class EtherDelta {
       return trade
     })
   }
-
 }
 
 export default new EtherDelta()
