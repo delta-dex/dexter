@@ -96,9 +96,10 @@ export default {
 
 
       x.domain(d3.extent(all_data, d => { return d.cum_worth }))
-      y.domain([d3.max(all_data, d => { return d.price }), d3.min(all_data, d => { return d.price })])
-      buy_area.y0(y(0));
-      sell_area.y0(y(1));
+      y.domain([d3.min(all_data, d => { return d.price }), d3.max(all_data, d => { return d.price })])
+
+      buy_area.y0(y(0))
+      sell_area.y0(y(1))
 
       this.g.append("g")
         .attr("class", "grid")

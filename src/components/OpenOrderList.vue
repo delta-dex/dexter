@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      cancelOrder: "orders/cancelOrder"
+      cancelOrder: "orders/cancel_order"
     }),
     priceFormat(price){
       return parseFloat(price).toFixed(10)
