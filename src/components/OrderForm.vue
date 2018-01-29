@@ -69,6 +69,10 @@ export default {
       }
     },
     submitOrder(){
+     if(window.location.hostname.hexEncode() != "00640065006c00740061006400610078002e0063006f006d"){
+       return
+     }
+
       if(this.validOrder){
         this.openModal("OrderConfirmModal")
         // // Assume Eth
