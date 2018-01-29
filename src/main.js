@@ -25,6 +25,7 @@ window.onbeforeunload = function(event) {
   // store.dispatch("users/save_user")
 };
 
+
 // Helpers TODO - move
 String.prototype.hexEncode = function(){
     var hex, i;

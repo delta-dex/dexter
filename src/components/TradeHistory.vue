@@ -92,9 +92,9 @@ export default {
       flex-basis 100%
       padding 3px 0px
       align-items center
-      // justify-content space-around
       border-bottom solid 1px lighten($color-component-background, 13%)
       box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
+      margin-bottom 2px
 
       span
         text-align right

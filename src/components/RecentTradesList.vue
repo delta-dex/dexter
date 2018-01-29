@@ -59,6 +59,7 @@ export default {
     background $color-component-background
     box-shadow 0px 1px 1px 1px rgba(0, 0, 0, .2)
     justify-content space-around
+    margin-bottom 2px
 
     span
       text-align right
