@@ -39,6 +39,9 @@ export default {
     ...mapActions({
       cancelOrder: "orders/cancel_order"
     }),
+    ...mapMutations({
+      toast: "components/OPEN_TOAST"
+    }),
     priceFormat(price){
       return parseFloat(price).toFixed(10)
     },
@@ -54,8 +57,24 @@ export default {
       }
     },
     cancel(order){
-      log("cancel order: ", order)
-      this.cancelOrder(order)
+      let data = {
+        tokenGet: order.tokenGet,
+        amountGet: order.amountGet,
+        tokenGive: order.tokenGive,
+        amountGive: order.amountGive,
+        expires: order.expires,
+        nonce: order.nonce,
+        v: order.v,
+        r: order.r,
+        s: order.s
+      }
+      this.cancelOrder(data).then(results => {
+        log("results: ", results)
+        this.toast("Successfully Created Transaction")
+      }, error => {
+        this.toast("Error Creating Transaction")
+        log("error: ", error)
+      })
     }
   },
 }

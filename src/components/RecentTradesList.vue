@@ -78,10 +78,9 @@ export default {
   .order-list
     display block
     flex-basis 100%
-    overflow scroll
+    overflow auto
     flex-wrap wrap
     height 100%
-    overflow scroll
 
     .empty
       display flex

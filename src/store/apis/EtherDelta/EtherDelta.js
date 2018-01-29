@@ -233,13 +233,15 @@ class EtherDelta {
     })
   }
 
-  cancelOrder(tokenGive, tokenGet, amountGive, amountGet, expires, nonce){
-    this.contract.cancelOrder(tokenGet,  amountGet, tokenGive, amountGive, expires, nonce, v, r, s, function(error, result){
-      if(!error){
-        resolve(result)
-      } else {
-        reject(error)
-      }
+  cancelOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, v, r, s){
+    return new Promise((resolve, reject) =>{
+      this.contract.cancelOrder(tokenGet,  amountGet, tokenGive, amountGive, expires, nonce, v, r, s, function(error, result){
+        if(!error){
+          resolve(result)
+        } else {
+          reject(error)
+        }
+      })
     })
   }
 

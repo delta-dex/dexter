@@ -104,8 +104,8 @@ const actions = {
       throw error
     })
   },
-  cancel_order: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce}) => {
-    return APIs.EtherDelta.cancelOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce).then(result => {
+  cancel_order: ({commit, state}, {tokenGet, amountGet, tokenGive, amountGive, expires, nonce, v, r, s}) => {
+    return APIs.EtherDelta.cancelOrder(tokenGet, amountGet, tokenGive, amountGive, expires, nonce, v, r, s).then(result => {
       log("result ", result)
       return result
     }, error => {
