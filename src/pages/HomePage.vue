@@ -22,7 +22,7 @@
       span Contact - yintothayang@gmail.com
 
     .right
-      img(src="/static/deltadax.png")
+      img(src="/DeltaDax/static/deltadax.png")
   .visit.section
         router-link.visit-button(:to="{name: 'exchange'}" tag="span") View Exchange
 </template>
