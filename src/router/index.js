@@ -1,15 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Pages from '@/pages'
-import store from '../store'
 
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   base: '/',
   routes: [
-    {path: '*', redirect: '/exchange/RDN'},
+    {path: '*', redirect: '/home'},
+    {path: '/home', name: 'home', component: Pages.HomePage},
+    {path: '/exchange', redirect: '/exchange/RDN'},
     {path: '/exchange/:token', name: 'exchange', component: Pages.ExchangePage},
+
     // {path: '/currencies/:symbol', name: 'currency', component: Pages.CurrencyPage},
     // {path: '/arbitrage', name: 'arbitrage', component: Pages.ArbitragePage},
     // {path: '/exchanges/:id', name: 'exchange', component: Pages.ExchangePage},

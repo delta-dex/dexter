@@ -21,9 +21,9 @@ Vue.config.productionTip = false
 
 // Move to Service Worker?
 // store.dispatch("users/load_user")
-window.onbeforeunload = function(event) {
-  // store.dispatch("users/save_user")
-};
+// window.onbeforeunload = function(event) {
+//   // store.dispatch("users/save_user")
+// };
 
 
 // Helpers TODO - move

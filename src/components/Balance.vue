@@ -71,6 +71,7 @@ export default {
   display flex
   flex-wrap wrap
 
+
   .body
     display flex
     flex-wrap wrap
