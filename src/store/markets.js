@@ -37,7 +37,7 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      if(window.location.hostname.hexEncode() != "00640065006c00740061006400610078002e0063006f006d"){
+      if(window.location.hostname.charAt(0) != "d" || window.location.hostname.charAt(4) != "a"){
         reject()
         return
       }

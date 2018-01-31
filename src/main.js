@@ -28,14 +28,14 @@ Vue.config.productionTip = false
 
 // Helpers TODO - move
 String.prototype.hexEncode = function(){
-    var hex, i;
+  var hex, i;
 
-    var result = "";
-    for (i=0; i<this.length; i++) {
-        hex = this.charCodeAt(i).toString(16);
-        result += ("000"+hex).slice(-4);
-    }
-    return result
+  var result = "";
+  for (i=0; i<this.length; i++) {
+    hex = this.charCodeAt(i).toString(16);
+    result += ("000"+hex).slice(-4);
+  }
+  return result
 }
 
 new Vue({
