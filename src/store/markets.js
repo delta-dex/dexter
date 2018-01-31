@@ -24,6 +24,8 @@ const mutations = {
 // Actions
 const actions = {
   init_current_market: ({dispatch, commit, state, rootState}) => {
+    console.log("init market")
+
     // Remove Listeners
     APIs.EtherDelta.socket.off('trades')
     APIs.EtherDelta.socket.off('myTrades')
@@ -43,7 +45,7 @@ const actions = {
       }
 
       APIs.EtherDelta.socket.once('market', (market) => {
-        log(market)
+        console.log(market)
         if(market.trades){
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
@@ -102,7 +104,7 @@ const actions = {
     })
 
     APIs.EtherDelta.socket.on('market', (market) => {
-      log(market)
+      console.log(market)
       // Because EtherDelta cant program
       if(!market.trades || !market.orders){// } || !market.myTrades || !market.myOrders){
         // log("ED SUCKS!!")

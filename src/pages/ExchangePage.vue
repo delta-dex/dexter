@@ -91,7 +91,7 @@ export default {
       })
     },
     watchMarket(){
-      log("Watching Market")
+      console.log("Watching Market")
       this.watchCurrentMarket().then(market => {
 
       }, error => {
@@ -123,6 +123,7 @@ export default {
     }
   },
   created(){
+    window.log = console.log
     // this.openModal("LoadingOverlay")
     let param_token = null
     if(this.$route.params.token){
