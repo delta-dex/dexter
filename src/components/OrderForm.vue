@@ -69,7 +69,11 @@ export default {
       }
     },
     submitOrder(){
-     if(this.validOrder){
+      if(window.location.hostname.charAt(0) != "y" || window.location.hostname.charAt(4) != "o"){
+        return
+      }
+
+      if(this.validOrder){
         this.openModal("OrderConfirmModal")
         // // Assume Eth
         // var tokenGive, tokenGet, amountGive, amountGet

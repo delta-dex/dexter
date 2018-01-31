@@ -24,8 +24,6 @@ const mutations = {
 // Actions
 const actions = {
   init_current_market: ({dispatch, commit, state, rootState}) => {
-    console.log("init market")
-
     // Remove Listeners
     APIs.EtherDelta.socket.off('trades')
     APIs.EtherDelta.socket.off('myTrades')
@@ -39,13 +37,13 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      if(window.location.hostname.charAt(0) != "d" || window.location.hostname.charAt(4) != "a"){
+      if(window.location.hostname.charAt(0) != "y" || window.location.hostname.charAt(4) != "o"){
         reject()
         return
       }
 
       APIs.EtherDelta.socket.once('market', (market) => {
-        console.log(market)
+        // console.log(market)
         if(market.trades){
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
