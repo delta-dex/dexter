@@ -3,7 +3,7 @@
   .left
     router-link.brand(:to="{name: 'home'}" tag="span")
       span.delta Delta
-      span.hyph -
+      //- span.hyph -
       span.dax DAX
     .break(v-if="$route.name != 'home'")
     .token-select(v-if="$route.name != 'home'")

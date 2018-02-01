@@ -1,6 +1,6 @@
 <template lang="pug">
 #app
-  .navbar-container
+  .navbar-container(v-if="$route.name == 'exchange'")
     navbar
 
   .router-view-container

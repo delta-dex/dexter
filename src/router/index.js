@@ -5,7 +5,6 @@ import Pages from '@/pages'
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
   base: '/',
   routes: [
     {path: '*', redirect: '/home'},
