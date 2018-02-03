@@ -47,32 +47,32 @@ export default {
 
   },
   mounted(){
-    let t = window.innerWidth * window.innerHeight
-    let n = t / 100
+    // let t = window.innerWidth * window.innerHeight
+    // let n = t / 100
 
-    let whitegreen = d3.interpolateRgb("#ccc", "#4da53c"),
-        greenred = d3.interpolateRgb("4da53c", "#ff6939"),
-        redwhite = d3.interpolateRgb("#ff6939", "#ccc");
+    // let whitegreen = d3.interpolateRgb("#ccc", "#4da53c"),
+    //     greenred = d3.interpolateRgb("4da53c", "#ff6939"),
+    //     redwhite = d3.interpolateRgb("#ff6939", "#ccc");
 
-    d3.select(".background").selectAll("div")
-      .data(d3.range(n))
-      .enter().append("div").attr("class","square")
-      .transition()
-      .delay(function(d, i) { return i + Math.random() * n / 2; })
-      .ease(d3.easeLinear)
-      .on("start", function repeat() {
-        d3.active(this)
-          .styleTween("background-color", function() { return whitegreen; })
-          .transition()
-          .delay(1000)
-          .styleTween("background-color", function() { return greenred; })
-          .transition()
-          .delay(1000)
-          .styleTween("background-color", function() { return redwhite; })
-          .transition()
-          .delay(n)
-          .on("start", repeat);
-      });
+    // d3.select(".background").selectAll("div")
+    //   .data(d3.range(n))
+    //   .enter().append("div").attr("class","square")
+    //   .transition()
+    //   .delay(function(d, i) { return i + Math.random() * n / 2; })
+    //   .ease(d3.easeLinear)
+    //   .on("start", function repeat() {
+    //     d3.active(this)
+    //       .styleTween("background-color", function() { return whitegreen; })
+    //       .transition()
+    //       .delay(1000)
+    //       .styleTween("background-color", function() { return greenred; })
+    //       .transition()
+    //       .delay(1000)
+    //       .styleTween("background-color", function() { return redwhite; })
+    //       .transition()
+    //       .delay(n)
+    //       .on("start", repeat);
+    //   });
   },
 }
 </script>

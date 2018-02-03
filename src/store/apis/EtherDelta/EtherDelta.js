@@ -76,8 +76,11 @@ class EtherDelta {
 
   depositEth(amount){
     amount = this.w3.toWei(amount, 'ether')
+    let data = {
+      value: amount
+    }
     return new Promise((resolve, reject) => {
-      this.contract.deposit(amount, function(error, result){
+      this.contract.deposit(data, function(error, result){
         if(!error){
           resolve(result)
         } else {

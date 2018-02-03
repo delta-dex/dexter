@@ -68,7 +68,7 @@ export default {
       }).catch(error => {
         this.loading = false
         this.error= true
-        this.error_message = error.message
+        this.error_message = " Transaction canceled"
         log("error: ", error)
       })
     },
@@ -84,13 +84,13 @@ export default {
         }).catch(error => {
           this.loading = false
           this.error= true
-          this.error_message = error.message
+          this.error_message = " Transaction canceled"
           log("error: ", error)
         })
       }).catch(error => {
         this.loading = false
         this.error= true
-        this.error_message = error.message
+        this.error_message = " Transaction canceled"
         log("error: ", error)
       })
     }
