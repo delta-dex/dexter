@@ -94,7 +94,9 @@ export default {
   padding 0em 6em
   position relative
   z-index 2
-  background-color: #feffff
+  background-color #feffff
+  // background linear-gradient(to left, rgba(30, 43, 52, .5) 10%, white , rgba(30, 43, 52, .5) 90%);
+  // background linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);
 
   .links {
     stroke: #000
@@ -126,7 +128,7 @@ export default {
     position absolute
     height 100vh
     width 100vw
-    opacity .8
+    // opacity .5
     svg
       height 100%
       width 100%

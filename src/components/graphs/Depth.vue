@@ -38,7 +38,6 @@ export default {
     sells: {
       handler: function(newData, oldData){
         if(this.sells.length && this.svg){
-          // this.formatData(this.buys, this.sells)
           setTimeout(()=> {
             this.draw(this.formattedBuys, this.formattedSells)
           }, 100)
@@ -52,7 +51,7 @@ export default {
 
   methods: {
     initChart(){
-      this.margin = {top: 0, right: 0, bottom: 0, left: 0}
+      this.margin = {top: 0, right: -1, bottom: -1, left: -1}
       this.width = this.$refs.depth_chart_container.clientWidth - this.margin.left - this.margin.right
       this.height = this.$refs.depth_chart_container.clientHeight - this.margin.top - this.margin.bottom
 
@@ -74,15 +73,15 @@ export default {
       d3.select("#depth-chart-group").selectAll("*").remove()
 
       // START
-      let x = d3.scaleLinear()
-          .rangeRound([0, this.width])
-      // let x = d3.scalePow().exponent(2)
+      // let x = d3.scaleLinear()
       //     .rangeRound([0, this.width])
+      let x = d3.scalePow().exponent(2)
+          .rangeRound([0, this.width])
 
-      let y = d3.scaleLinear()
-          .rangeRound([this.height, 0])
-      // let y = d3.scalePow().exponent(2)
+      // let y = d3.scaleLinear()
       //     .rangeRound([this.height, 0])
+      let y = d3.scalePow().exponent(2)
+          .rangeRound([this.height, 0])
 
       var buy_area = d3.area()
           .curve(d3.curveStep)
@@ -105,18 +104,16 @@ export default {
         .attr("class", "grid")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(x)
-              .ticks(5)
+              .ticks(30)
               .tickSize(-this.height)
-              .tickFormat("")
-             )
+              .tickFormat(""))
 
       this.g.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(y)
-              .ticks(15)
+              .ticks(20)
               .tickSize(-this.width)
-              .tickFormat("")
-             )
+              .tickFormat(""))
 
       // Buy Gradient
       this.g.append("linearGradient")
@@ -128,15 +125,9 @@ export default {
         .attr("y2", 0)
         .selectAll("stop")
         .data([
-          // {offset: "0%", color: "blue"},
-          // {offset: "0%", color: "rgba(30, 43, 52, .5)"},
-          {offset: "0%", color: "rgba(0, 0, 0, .5)"},
-          // {offset: "0%", color: "rgba(132, 247, 102, .1)"},
-          // {offset: "25%", color: "rgba(132, 247, 102, .25)"},
-          // {offset: "50%", color: "rgba(132, 247, 102, .5)"},
-          // {offset: "75%", color: "rgba(132, 247, 102, .75)"},
-          {offset: "100%", color: "rgba(132, 247, 102, .5)"},
-          // {offset: "100%", color: "red"}
+          {offset: "0%", color: "rgba(0, 0, 0, .6)"},
+          {offset: "50%", color: "rgba(132, 247, 102, .6)"},
+          {offset: "100%", color: "rgba(132, 247, 102, .7)"},
         ])
         .enter().append("stop")
         .attr("offset", d => { return d.offset })
@@ -152,8 +143,9 @@ export default {
         .attr("y2", 0)
         .selectAll("stop")
         .data([
-          {offset: "0%", color: "rgba(255,0,0,0.5)"},
-          {offset: "100%", color: "rgba(30, 43, 52, .5)"},
+          {offset: "0%", color: "rgba(255,0,0,0.6)"},
+          {offset: "50%", color: "rgba(255,0,0,0.6)"},
+          {offset: "100%", color: "rgba(30, 43, 52, .7)"},
         ])
         .enter().append("stop")
         .attr("offset", d => { return d.offset })
@@ -337,21 +329,22 @@ export default {
       width 100%
 
       text
+        opacity 0
         dy 10px
         fill transparentify($color-text, 45%)
 
    .buy-area
      // fill transparentify($color-green, 25%)
      fill url(#buy-area-gradient)
-     // stroke $color-green
-     // stroke-width 2px
+     stroke url(#buy-area-gradient)
+     stroke-width 3px
      // stroke-dasharray 1500
 
    .sell-area
      fill url(#sell-area-gradient)
      // fill transparentify($color-red, 25%)
-     // stroke $color-red
-     // stroke-width 2px
+     stroke url(#sell-area-gradient)
+     stroke-width 3px
      // stroke-dasharray 500
 
    .domain
@@ -363,14 +356,14 @@ export default {
      stroke black
      stroke-opacity 0.2
 
-  .grid line {
-    stroke black
-    stroke-opacity 0.2
+  .grid line
+    stroke rgba(0, 0, 0, .1)
+    stroke-width 1px
     shape-rendering crispEdges
-  }
 
-  .grid path {
+
+  .grid path
     stroke-width: 0;
-  }
+
 
 </style>
