@@ -8,17 +8,16 @@
       span.delta Delta
       span.dax DAX
 
-    //- .box
-    //-   p A new GDAX inspired UI for EtherDelta, decenteralized ERC20 exchange
-    //-   p An attempt to Provide the Ethereum community with a more intuitive way to interact with the EtherDelta exchange
-    //-   p Currently only MetaMask compatible
-    //-   p Working on re-writting contract and backend to make exchange feeless (only gas)
-    //-   p Report an Issue - https://github.com/yintothayang/DeltaDax/issues
-    //-   p Contact - yintothayang@gmail.com
+    .box
+      p DeltaDax is a new UI for EtherDelta, inspired by GDAX. All orders use EtherDelta's decenteralized contract and API
+      p An attempt to Provide the Ethereum community with a more intuitive way to interact with the EtherDelta exchange
+      p Currently only MetaMask compatible
+      p Working on re-writting contract and backend to make exchange feeless (only gas)
+      p Report an Issue - https://github.com/yintothayang/DeltaDax/issues
+      p Contact - yintothayang@gmail.com
 
-
-  //- .visit.section
-  //-       router-link.visit-button(:to="{name: 'exchange'}" tag="span") View Exchange
+  .visit.section
+    router-link.visit-button(:to="{name: 'exchange'}" tag="span") View Exchange
 </template>
 
 <script>
@@ -167,34 +166,36 @@ export default {
     flex-wrap wrap
     z-index 2
     justify-content center
-    pointer-events none
 
     .box
-      border-radius: 12px;
-      background-color: #fff;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, .5)
       box-shadow: 0 2px 4px 0 rgba(60,72,88,.4);
       border: 1px solid #eceff9;
-      padding 1em 1em .8em 1em
 
       margin-top 2em
-      padding 1em 2em
+      padding 2em 4em
 
       p
+        font-size 18px
         color rgba(30, 43, 52, 0.83)
 
   .visit
     align-items baseline
     justify-content center
-
+    flex-basis 100%
+    display flex
     .visit-button
+      z-index 3
       cursor pointer
       border-radius 4px
-      border 2px solid white
-      color white
+      border 2px solid rgba(0, 0, 0, .3)
+      color rgba(0, 0, 0, .8)
       padding 1em 2em
       transition all .3s
       font-size 22px
       &:hover
-        background rgba(255, 255, 255, .3)
+        background rgba(0, 0, 0, .3)
+
 
 </style>
