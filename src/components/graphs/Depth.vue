@@ -65,10 +65,8 @@ export default {
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     },
     draw(buy_data, sell_data){
-      log("draw")
       // log(buy_data)
       let all_data = buy_data.concat(sell_data)
-      log("all_data: ", all_data)
 
       d3.select("#depth-chart-group").selectAll("*").remove()
 
@@ -125,9 +123,10 @@ export default {
         .attr("y2", 0)
         .selectAll("stop")
         .data([
+
           {offset: "0%", color: "rgba(0, 0, 0, .6)"},
           {offset: "50%", color: "rgba(132, 247, 102, .6)"},
-          {offset: "100%", color: "rgba(132, 247, 102, .7)"},
+          {offset: "100%", color: "rgba(132, 247, 102, .6)"},
         ])
         .enter().append("stop")
         .attr("offset", d => { return d.offset })
@@ -177,11 +176,6 @@ export default {
         .call(d3.axisRight(y)
               .ticks(15)
              )
-    },
-    formatData(buys, sells){
-      // Buys
-      log("formatted_buys", this.formattedBuys)
-      log("formatted_sells", this.formattedSells)
     },
   },
   computed: {

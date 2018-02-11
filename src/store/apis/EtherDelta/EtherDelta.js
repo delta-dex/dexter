@@ -16,10 +16,19 @@ import ethjs from 'ethjs'
 class EtherDelta {
   constructor() {
     // this.w3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/Ky03pelFIxoZdAUsr82w"))
-    this.w3 = new Web3(web3.currentProvider)
-    this.contractAddr = "0x8d12a197cb00d4747a1fe03395095ce2a5cc6819"
-    this.contract = this.w3.eth.contract(ABIEtherDelta).at(this.contractAddr)
-    this.contractToken = this.w3.eth.contract(ABIToken)
+
+    if(typeof web3 !== 'undefined') {
+      this.w3 = new Web3(web3.currentProvider)
+      this.contractAddr = "0x8d12a197cb00d4747a1fe03395095ce2a5cc6819"
+      this.contract = this.w3.eth.contract(ABIEtherDelta).at(this.contractAddr)
+      this.contractToken = this.w3.eth.contract(ABIToken)
+    } else {
+      this.w3 = {
+        eth: {
+
+        }
+      }
+    }
 
     this.ed_abi = ABIEtherDelta
     this.token_abi = ABIToken
