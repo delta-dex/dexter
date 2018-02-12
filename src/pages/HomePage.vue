@@ -17,7 +17,7 @@
       p Report an Issue or ask a Question - <a href="https://github.com/yintothayang/DeltaDax/issues" target="_blank"> https://github.com/yintothayang/DeltaDax/issues</a>
 
   .visit.section
-    router-link.visit-button(:to="{name: 'exchange', params: {token: 'AMB'}}" tag="span") View Exchange
+    router-link.visit-button(:to="{name: 'exchange', params: {token: 'PPT'}}" tag="span") View Exchange
 </template>
 
 <script>

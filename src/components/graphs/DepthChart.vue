@@ -36,7 +36,7 @@ export default {
   watch: {
     buys: {
       handler: function(newData, oldData){
-        if(this.buys.length && this.svg){
+        if(this.buys.length && this.sells.length && this.svg){
           this.draw(this.formatData(this.buys, "buy"), this.formatData(this.sells, "sell"))
         }
       },
@@ -45,7 +45,7 @@ export default {
     },
     sells: {
       handler: function(newData, oldData){
-        if(this.sells.length && this.svg){
+        if(this.sells.length && this.svg && this.buys.length){
           this.draw(this.formatData(this.buys, "buy"), this.formatData(this.sells, "sell"))
         }
       },

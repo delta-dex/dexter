@@ -37,13 +37,13 @@ const actions = {
     })
 
     return new Promise((resolve, reject) => {
-      // let w = window
-      // let l = w.location
-      // let h = l.hostname
-      // if(h.charAt(0) != "y" || h.charAt(4) != "o"){
-      //   reject()
-      //   return
-      // }
+      let w = window
+      let l = w.location
+      let h = l.hostname
+      if(h.charAt(0) != "y" || h.charAt(4) != "o"){
+        reject()
+        return
+      }
 
       APIs.EtherDelta.socket.once('market', (market) => {
         // console.log(market)
