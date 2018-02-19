@@ -8,7 +8,7 @@
 import * as d3 from 'd3'
 import moment from 'moment'
 export default {
-  name: 'DepthChart',
+  name: 'Depth',
   props: {
     buys: {
       type: Array,

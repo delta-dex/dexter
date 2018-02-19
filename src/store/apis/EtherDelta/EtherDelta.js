@@ -42,7 +42,7 @@ class EtherDelta {
 
   initSocket(){
     return new Promise((resolve, reject) => {
-      this.socket = io.connect(config.socketServer[0], { transports: ['websocket'] })
+      this.socket = io.connect(config.socketServer, { transports: ['websocket'] })
       this.socket.on('connect', () => {
         resolve(this.socket)
       })
@@ -51,7 +51,7 @@ class EtherDelta {
       })
       this.socket.on('disconnect', disconnect => {
         console.log("EtherDelta socket disconnect: ", disconnect)
-        this.socket = io.connect(config.socketServer[0], { transports: ['websocket'] })
+        this.socket = io.connect(config.socketServer, { transports: ['websocket'] })
         // this.socket.open();
       })
 
@@ -395,6 +395,7 @@ class EtherDelta {
       if(order.amountFilled == null){
         order.amountFilled = 0
       }
+      order.volume = order.amount
       order.amountFilled = Math.abs(parseFloat(order.amountFilled) / Math.pow(10, currentToken.decimals))
       order.price = Math.abs(parseFloat(order.price))
       order.formatted_date = this.dateFormatter.format(new Date(order.updated))
