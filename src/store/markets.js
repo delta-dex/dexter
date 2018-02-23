@@ -46,6 +46,7 @@ const actions = {
       }
 
       APIs.EtherDelta.socket.once('market', (market) => {
+        log(market)
         if(market.trades){
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
