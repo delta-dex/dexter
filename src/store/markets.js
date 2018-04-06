@@ -46,7 +46,6 @@ const actions = {
       }
 
       APIs.EtherDelta.socket.once('market', (market) => {
-        log(market)
         if(market.trades){
           let trades = APIs.EtherDelta.parseTrades(market.trades, rootState.tokens.current_token)
           commit("trades/UPDATE_TRADES", trades, {root: true})
@@ -105,7 +104,6 @@ const actions = {
     })
 
     APIs.EtherDelta.socket.on('market', (market) => {
-      console.log(market)
       // Because EtherDelta cant program
       if(!market.trades || !market.orders){// } || !market.myTrades || !market.myOrders){
         // log("ED SUCKS!!")

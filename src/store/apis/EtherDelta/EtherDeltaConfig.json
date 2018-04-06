@@ -22,7 +22,7 @@
   "gasOrder": 250000,
   "minOrderSize": 0.001,
   "apiServer": ["https://cache.etherdelta.com"],
-  "socketServer": "https://api.rektex.io",
+  "socketServers": ["https://socket01.etherdelta.com", "https://socket02.etherdelta.com",  "https://socket03.etherdelta.com",   "https://socket04.etherdelta.com", "https://api.rektex.io" ],
   "userCookie": "EtherDelta",
   "eventsCacheCookie": "EtherDelta_eventsCache",
   "ordersCacheCookie": "EtherDelta_ordersCache",

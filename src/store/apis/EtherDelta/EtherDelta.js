@@ -30,6 +30,7 @@ class EtherDelta {
       }
     }
 
+    this.connectionAttempts = 0
     this.ed_abi = ABIEtherDelta
     this.token_abi = ABIToken
     this.dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -42,10 +43,17 @@ class EtherDelta {
 
   initSocket(){
     return new Promise((resolve, reject) => {
-      this.socket = io.connect(config.socketServer, { transports: ['websocket'] })
+      this.socket = io.connect(config.socketServers[this.connectionAttempts], { transports: ['websocket'] })
       this.socket.on('connect', () => {
         resolve(this.socket)
       })
+
+      this.socket.on('connect_failed', () => {
+        console.log('Connection Failed!!!!!!')
+        this.connectionAttempts++
+        this.socket = io.connect(config.socketServers[this.connectionAttempts], { transports: ['websocket'] })
+      })
+
       this.socket.on('error', error => {
         console.log("EtherDelta socket error: ", error)
       })
