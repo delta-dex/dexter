@@ -26,7 +26,7 @@ export default {
   },
   data(){
     return {
-      agg: 60
+      agg: 10
     }
   },
   props: {
