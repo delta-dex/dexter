@@ -30,6 +30,7 @@
   "ledgerPath": "m/44'/60'/0'/0",
   "tokens": [
     { "addr": "0x0000000000000000000000000000000000000000", "name": "ETH", "decimals": 18 },
+    { "addr": "0x949bed886c739f1a3273629b3320db0c5024c719", "name": "AMIS", "decimals": 9 },
     { "addr": "0xd8912c10681d8b21fd3742244f44658dba12264e", "name": "PLU", "decimals": 18 },
     { "addr": "0xaf30d2a7e90d7dc361c8c4585e9bb7d2f6f15bc7", "name": "1ST", "decimals": 18 },
     { "addr": "0x936f78b9852d12f5cb93177c1f84fb8513d06263", "name": "GNTW", "decimals": 18 },
@@ -561,5 +562,5 @@
     { "addr": "0xc6b014274d7406641711fb8889f93f4f11dec810", "name": "NAO", "decimals": 18 },
     { "addr": "0x3485b9566097ad656c70d6ebbd1cd044e2e72d05", "name": "PNK", "decimals": 0 }
   ],
-  "defaultPair": { "token": "PPT", "base": "ETH" }
+  "defaultPair": { "token": "AMIS", "base": "ETH" }
 }

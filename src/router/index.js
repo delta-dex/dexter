@@ -9,7 +9,7 @@ const router = new Router({
   routes: [
     {path: '*', redirect: '/home'},
     {path: '/home', name: 'home', component: Pages.HomePage},
-    {path: '/exchange', redirect: '/exchange/PPT'},
+    {path: '/exchange', redirect: '/exchange/AMIS'},
     {path: '/exchange/:token', name: 'exchange', component: Pages.ExchangePage},
 
     // {path: '/currencies/:symbol', name: 'currency', component: Pages.CurrencyPage},
