@@ -1,8 +1,8 @@
 {
-  "name": "Construct",
+  "name": "Amis Delta dax",
   "version": "1.0.0",
-  "description": "kubera hype machine",
-  "author": "yintothayang <yintothayang@gmail.com>",
+  "description": "Amis Delta Dax UI is a new UI for EtherDelta. Built with NodeJs 8, Vue",
+  "author": "amisolution>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -69,7 +69,7 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">= 4.0.0",
+    "node": "8.x",
     "npm": ">= 3.0.0"
   },
   "browserslist": [

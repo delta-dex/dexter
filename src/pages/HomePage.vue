@@ -9,15 +9,15 @@
       span.dax DAX
 
     .box
-      p DeltaDax is a new UI for EtherDelta, inspired by GDAX. All orders use EtherDelta's decentralized contract and API
+      p Amis Delta Dax is a new UI for EtherDelta, inspired by GDAX. All orders use EtherDelta's decentralized contract and API
       p An attempt to Provide the Ethereum community with a more intuitive way to interact with the EtherDelta exchange
       p Currently only MetaMask compatible
       p Software is provided as is, WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
       p or FITNESS FOR A PARTICULAR PURPOSE. Use at your own risk.
-      p Report an Issue or ask a Question - <a href="https://github.com/yintothayang/dexter/issues" target="_blank"> https://github.com/yintothayang/dexter/issues</a>
+      p Report an Issue or ask a Question - <a href="https://github.com/ami-solution/dexter/issues" target="_blank"> https://github.com/ami-solution/dexter/issues</a>
 
   .visit.section
-    router-link.visit-button(:to="{name: 'exchange', params: {token: 'PPT'}}" tag="span") View Exchange
+    router-link.visit-button(:to="{name: 'exchange', params: {token: 'AMIS'}}" tag="span") View Exchange
 </template>
 
 <script>
