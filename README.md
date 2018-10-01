@@ -17,7 +17,7 @@ Amis Delta Dax is an experimental UI which interacts with Etherdelta decentraliz
 Amis Delta Dax is part of the ERC20-AMIS Token Future, options and crypto derivatives Project. Amis Delta Dax is a web front end designed to interact with 0x project smart contracts powered by the ethereum blockchain.
 
 * Live version is available here:
-  * [https://sprout-llama.glitch.me](https://sprout-llama.glitch.me))
+  * [https://sprout-llama.glitch.me](https://sprout-llama.glitch.me)
 
 
 ## Build Setup
